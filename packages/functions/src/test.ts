@@ -33,7 +33,7 @@ export const handler = ApiHandler(async (_evt) => {
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
     executablePath: process.env.IS_LOCAL
-      ? "/tmp/localChromium/chromium/mac-1165065/chrome-mac/Chromium.app/Contents/MacOS/Chromium"
+      ? "/tmp/localChromium/chromium/mac-1165199/chrome-mac/Chromium.app/Contents/MacOS/Chromium"
       : await chromium.executablePath(),
     headless: chromium.headless,
   });

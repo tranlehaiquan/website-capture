@@ -4,13 +4,16 @@ import { connectDB } from "./data-source";
 import { URICapture } from "./entity/URICapture";
 
 export const handler = ApiHandler(async (_evt) => {
+  // get id from path /capture/{id}
+  const id = _evt.pathParameters?.id;
+
   // get config
   const POSTGRES_URL = Config.POSTGRES_URL;
   // connect db
   await connectDB(POSTGRES_URL);
   // get url params
   const params = _evt.queryStringParameters || {};
-  const captureId = params.id;
+  const captureId = id || params.id;
 
   if (!captureId) {
     return {
