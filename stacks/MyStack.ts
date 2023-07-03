@@ -30,6 +30,7 @@ export function API({ stack }: StackContext) {
           },
         },
         runtime: "nodejs18.x",
+        timeout: 120,
       },
     },
   });
