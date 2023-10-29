@@ -23,4 +23,4 @@ jobs:
       - name: Build with sst
         run: |
           npx sst telemetry disable
-          pnpm run build --stage dev
+          pnpm run build
