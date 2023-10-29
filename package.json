@@ -12,22 +12,22 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@tsconfig/node18": "^18.2.0",
-    "aws-cdk-lib": "2.84.0",
-    "constructs": "10.1.156",
-    "sst": "^2.18.0",
-    "typescript": "^5.1.6"
+    "@tsconfig/node18": "^18.2.2",
+    "aws-cdk-lib": "2.103.1",
+    "constructs": "10.3.0",
+    "sst": "^2.32.2",
+    "typescript": "^5.2.2"
   },
   "workspaces": [
     "packages/*"
   ],
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.363.0",
-    "@aws-sdk/client-sqs": "^3.363.0",
-    "@aws-sdk/s3-request-presigner": "^3.363.0",
+    "@aws-sdk/client-s3": "^3.438.0",
+    "@aws-sdk/client-sqs": "^3.438.0",
+    "@aws-sdk/s3-request-presigner": "^3.438.0",
     "@sparticuz/chromium": "113.0.1",
     "http-errors": "^2.0.0",
-    "pg": "^8.11.1",
+    "pg": "^8.11.3",
     "puppeteer-core": "20.1.2",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.17"
