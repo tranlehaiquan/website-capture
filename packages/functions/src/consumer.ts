@@ -3,11 +3,10 @@ import { connectDB } from "./data-source";
 import { Config } from "sst/node/config";
 import { Status, URICapture } from "./entity/URICapture";
 
-import puppeteer from "puppeteer-core";
 import { Website } from "./entity/Website";
-import chromium from '@sparticuz/chromium';
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
+import getWorker from "@website-capture/core/puppeteerWorker";
 
 const s3Client = new S3Client({});
 
@@ -15,14 +14,7 @@ export const handler = async (_evt: SQSEvent) => {
   const records = _evt.Records;
   const failedIDs: string[] = [];
 
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: process.env.IS_LOCAL
-      ? "/tmp/localChromium/chromium/mac-1165065/chrome-mac/Chromium.app/Contents/MacOS/Chromium"
-      : await chromium.executablePath(),
-    headless: chromium.headless,
-  });
+  const browser = await getWorker();
 
   // connect db
   const POSTGRES_URL = Config.POSTGRES_URL;
