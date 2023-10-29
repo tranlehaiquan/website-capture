@@ -2,9 +2,9 @@ import { ApiHandler } from "sst/node/api";
 import { Config } from "sst/node/config";
 import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 
-import { connectDB } from "./data-source";
-import { Website } from "./entity/Website";
-import { URICapture } from "./entity/URICapture";
+import { connectDB } from "../data-source";
+import { Website } from "../entity/Website";
+import { URICapture } from "../entity/URICapture";
 import { Queue } from "sst/node/queue";
 
 const sqsClient = new SQSClient({});

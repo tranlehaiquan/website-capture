@@ -69,10 +69,6 @@ importers:
         version: 0.32.2
 
   packages/functions:
-    dependencies:
-      '@website-capture/core':
-        specifier: '*'
-        version: link:../core
     devDependencies:
       '@types/aws-lambda':
         specifier: ^8.10.119

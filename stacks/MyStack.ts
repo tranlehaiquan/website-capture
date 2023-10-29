@@ -51,9 +51,8 @@ export function API({ stack }: StackContext) {
       },
     },
     routes: {
-      "GET /": "packages/functions/src/lambda.handler",
-      "POST /capture": "packages/functions/src/captureWebsite.handler",
-      "GET /capture/{id}": "packages/functions/src/getCapture.handler",
+      "POST /capture": "packages/functions/src/capture/post.handler",
+      "GET /capture/{id}": "packages/functions/src/capture/get.handler",
       "POST /test": "packages/functions/src/test.handler",
     },
   });
