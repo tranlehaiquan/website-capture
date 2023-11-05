@@ -12,7 +12,7 @@ const s3Client = new S3Client({});
 
 export const handler = async (_evt: SQSEvent) => {
   const records = _evt.Records;
-  const failedIDs: string[] = [];
+  const failedIDs: { itemIdentifier: string }[] = [];
 
   const browser = await getWorker();
 
@@ -27,45 +27,54 @@ export const handler = async (_evt: SQSEvent) => {
 
       const capture = await URICapture.findOneBy({ id: captureId });
       if (capture) {
-        let format = capture.format ? capture.format : "jpeg";
+        try {
+          let format = capture.format ? capture.format : "jpeg";
 
-        if (format === "jpg") {
-          format = "jpeg";
+          if (format === "jpg") {
+            format = "jpeg";
+          }
+
+          const website = await Website.findOneBy({ id: capture.websiteId });
+          const key = `${captureId}.${capture.format}`;
+
+          if (!website) {
+            failedIDs.push({ itemIdentifier: record.messageId });
+            return;
+          }
+
+          const page = await browser.newPage();
+
+          page.setViewport({
+            width: capture.width,
+            height: capture.height,
+          });
+
+          await page.goto(website.uri);
+
+          const buffer = await page.screenshot({
+            type: format as any,
+          });
+
+          const command = new PutObjectCommand({
+            Bucket: Bucket.sourceBucket.bucketName,
+            Key: key,
+            Body: buffer,
+            ContentType: `image/${format}`,
+          });
+
+          await s3Client.send(command);
+
+          capture.status = Status.successful;
+          capture.imagePath = key;
+          await capture.save();
+        } catch (e) {
+          console.error(e);
+          capture.status = Status.failed;
+          await capture?.save();
+          failedIDs.push({
+            itemIdentifier: record.messageId,
+          });
         }
-
-        const website = await Website.findOneBy({ id: capture.websiteId });
-        const key = `${captureId}.${capture.format}`;
-
-        if (!website) {
-          failedIDs.push(captureId);
-          return;
-        }
-
-        const page = await browser.newPage();
-
-        page.setViewport({
-          width: capture.width,
-          height: capture.height,
-        });
-
-        await page.goto(website.uri);
-
-        const buffer = await page.screenshot({
-          type: format as any,
-        });
-
-        const command = new PutObjectCommand({
-          Bucket: Bucket.sourceBucket.bucketName,
-          Key: key,
-          Body: buffer,
-          ContentType: `image/${format}`,
-        });
-
-        await s3Client.send(command);
-
-        capture.status = Status.successful;
-        capture.imagePath = key;
-        await capture.save();
       }
     })
   );
@@ -76,8 +85,10 @@ export const handler = async (_evt: SQSEvent) => {
   }
   await browser.close();
 
+  console.log({
+    batchItemFailures: failedIDs,
+  });
   return {
-    statusCode: 200,
-    body: JSON.stringify(failedIDs),
+    batchItemFailures: failedIDs,
   };
 };

@@ -37,17 +37,23 @@ export function API({ stack, app }: StackContext) {// Create User Pool
           },
         },
         runtime: "nodejs18.x",
-        timeout: 120,
       },
+      // cdk for function
+      cdk: {
+        eventSource: {
+          reportBatchItemFailures: true,
+        }
+      }
     },
+    // cdk for queue
     cdk: {
       queue: {
         deadLetterQueue: {
           maxReceiveCount: 3,
           queue: deadLetterQueue.cdk.queue,
-        }
-      }
-    }
+        },
+      },
+    },
   });
 
   const api = new Api(stack, "api", {
