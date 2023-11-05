@@ -5,10 +5,15 @@ import {
   Queue,
   StaticSite,
   Config,
+  Cognito,
 } from "sst/constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 
-export function API({ stack }: StackContext) {
+export function API({ stack, app }: StackContext) {// Create User Pool
+  const auth = new Cognito(stack, "Auth", {
+    login: ["email"],
+  });
+
   const layerChromium = new lambda.LayerVersion(stack, "chromiumLayers", {
     code: lambda.Code.fromAsset("layers/chromium"),
   });
@@ -16,6 +21,8 @@ export function API({ stack }: StackContext) {
   const POSTGRES_URL = new Config.Secret(stack, "POSTGRES_URL");
   // new s3
   const bucket = new Bucket(stack, "sourceBucket", {});
+
+  const deadLetterQueue = new Queue(stack, "MyDLQ");
 
   // new queue
   const queue = new Queue(stack, "queue", {
@@ -33,9 +40,26 @@ export function API({ stack }: StackContext) {
         timeout: 120,
       },
     },
+    cdk: {
+      queue: {
+        deadLetterQueue: {
+          maxReceiveCount: 3,
+          queue: deadLetterQueue.cdk.queue,
+        }
+      }
+    }
   });
 
   const api = new Api(stack, "api", {
+    authorizers: {
+      jwt: {
+        type: "user_pool",
+        userPool: {
+          id: auth.userPoolId,
+          clientIds: [auth.userPoolClientId],
+        },
+      },
+    },
     defaults: {
       function: {
         bind: [bucket, queue, POSTGRES_URL],
@@ -49,6 +73,7 @@ export function API({ stack }: StackContext) {
         timeout: 120,
         memorySize: 1024 * 2,
       },
+      authorizer: "jwt",
     },
     routes: {
       "POST /capture": "packages/functions/src/capture/post.handler",
@@ -63,6 +88,9 @@ export function API({ stack }: StackContext) {
     buildCommand: "npm run build",
     environment: {
       VITE_APP_API_URL: api.url,
+      VITE_APP_REGION: app.region,
+      VITE_APP_USER_POOL_ID: auth.userPoolId,
+      VITE_APP_USER_POOL_CLIENT_ID: auth.userPoolClientId,
     },
   });
 
@@ -71,5 +99,13 @@ export function API({ stack }: StackContext) {
     Bucket: bucket.bucketName,
     Web: web.url,
     Queue: queue.queueName,
+    DeadLetterQueue: deadLetterQueue.queueName,
+    UserPoolId: auth.userPoolId,
+    UserPoolClientId: auth.userPoolClientId,
   });
+
+  return {
+    api,
+    bucket,
+  }
 }

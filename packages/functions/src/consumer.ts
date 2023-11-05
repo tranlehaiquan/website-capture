@@ -20,28 +20,38 @@ export const handler = async (_evt: SQSEvent) => {
   const POSTGRES_URL = Config.POSTGRES_URL;
   await connectDB(POSTGRES_URL);
 
-
   await Promise.all(
     records.map(async (record) => {
       const body = JSON.parse(record.body);
       const captureId = body.captureId;
 
       const capture = await URICapture.findOneBy({ id: captureId });
-      const key = `${captureId}.jpeg`;
       if (capture) {
+        let format = capture.format ? capture.format : "jpeg";
+
+        if (format === "jpg") {
+          format = "jpeg";
+        }
+
         const website = await Website.findOneBy({ id: capture.websiteId });
+        const key = `${captureId}.${capture.format}`;
 
         if (!website) {
           failedIDs.push(captureId);
           return;
         }
-        console.log(website);
 
         const page = await browser.newPage();
+
+        page.setViewport({
+          width: capture.width,
+          height: capture.height,
+        });
+
         await page.goto(website.uri);
 
         const buffer = await page.screenshot({
-          type: 'jpeg',
+          type: format as any,
         });
 
         const command = new PutObjectCommand({
@@ -52,7 +62,6 @@ export const handler = async (_evt: SQSEvent) => {
 
         await s3Client.send(command);
 
-        console.log('scuccessfully captured screenshot');
         capture.status = Status.successful;
         capture.imagePath = key;
         await capture.save();
@@ -61,11 +70,10 @@ export const handler = async (_evt: SQSEvent) => {
   );
 
   const pages = await browser.pages();
-  for(let i = 0; i < pages.length; i++) {
+  for (let i = 0; i < pages.length; i++) {
     await pages[i].close();
   }
   await browser.close();
-  console.log('close all');
 
   return {
     statusCode: 200,

@@ -2,7 +2,7 @@ import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
 const YOUR_LOCAL_CHROMIUM_PATH =
-  "/tmp/localChromium/chromium/mac_arm-1216636/chrome-mac/Chromium.app/Contents/MacOS/Chromium";
+  "/tmp/localChromium/chromium/mac_arm-1219983/chrome-mac/Chromium.app/Contents/MacOS/Chromium";
 
 const getWorker = async () => {
   const browser = await puppeteer.launch({

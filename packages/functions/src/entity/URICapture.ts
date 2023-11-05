@@ -8,6 +8,12 @@ export enum Status {
   "failed" = "failed",
 }
 
+export enum Format {
+  "png" = "png",
+  "jpeg" = "jpeg",
+  "webp" = "webp",
+}
+
 @Entity()
 export class URICapture extends BaseEntityCustom {
   @PrimaryGeneratedColumn("uuid")
@@ -30,4 +36,21 @@ export class URICapture extends BaseEntityCustom {
     default: Status.inProcess,
   })
   status: Status;
+
+  // width
+  @Column({ type: "int" })
+  width: number;
+
+  // height
+  @Column({ type: "int" })
+  height: number;
+
+  // format
+  @Column({
+    type: "varchar",
+    enum: Format,
+    length: 255,
+    default: Format.jpeg,
+  })
+  format: Format;
 }
