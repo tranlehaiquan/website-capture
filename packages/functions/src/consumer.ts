@@ -58,6 +58,7 @@ export const handler = async (_evt: SQSEvent) => {
           Bucket: Bucket.sourceBucket.bucketName,
           Key: key,
           Body: buffer,
+          ContentType: `image/${format}`,
         });
 
         await s3Client.send(command);

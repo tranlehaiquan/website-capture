@@ -1,4 +1,8 @@
-# Getting started
+# TODO
+
+- Auto setup chromium
+
+## Getting started
 
 ```bash
 # make dir layers/chromium
