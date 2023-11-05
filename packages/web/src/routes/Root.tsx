@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import auth from "../signals/auth";
 
 const schema = yup.object().shape({
   uri: yup.string().url("URL must be validate").required("URL can't be empty"),
@@ -20,13 +21,14 @@ export default function Root() {
     });
 
     const result = await rs.json();
-    if(result?.id) {
+    if (result?.id) {
       navigate(`/web/${result.id}`);
     }
   };
 
   return (
     <div className="container h-screen w-screen">
+      <p>{auth.value.userInfo.attributes.email}</p>
       <div className="flex items-start mt-6 w-1/2 mx-auto">
         <div className="w-full">
           <input
