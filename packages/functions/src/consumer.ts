@@ -1,12 +1,12 @@
 import { SQSEvent } from "aws-lambda";
 import { connectDB } from "./data-source";
 import { Config } from "sst/node/config";
-import { Status, URICapture } from "./entity/URICapture";
+import { URICapture } from "./entity/URICapture";
 
-import { Website } from "./entity/Website";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
 import getWorker from "@website-capture/core/puppeteerWorker";
+import { Status } from "./constants";
 
 const s3Client = new S3Client({});
 
@@ -34,10 +34,9 @@ export const handler = async (_evt: SQSEvent) => {
             format = "jpeg";
           }
 
-          const website = await Website.findOneBy({ id: capture.websiteId });
           const key = `${captureId}.${capture.format}`;
 
-          if (!website) {
+          if (!capture.website) {
             failedIDs.push({ itemIdentifier: record.messageId });
             return;
           }
@@ -49,7 +48,7 @@ export const handler = async (_evt: SQSEvent) => {
             height: capture.height,
           });
 
-          await page.goto(website.uri);
+          await page.goto(capture.website);
 
           const buffer = await page.screenshot({
             type: format as any,

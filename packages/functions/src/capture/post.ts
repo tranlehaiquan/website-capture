@@ -5,7 +5,6 @@ import { Queue } from "sst/node/queue";
 import * as yup from "yup";
 
 import { connectDB } from "../data-source";
-import { Website } from "../entity/Website";
 import { URICapture } from "../entity/URICapture";
 
 const bodySchema = yup.object().shape({
@@ -34,19 +33,9 @@ export const handler = ApiHandler(async (event) => {
 
     const { uri } = bodyParsed;
 
-    // check if website exists
-    let website = await Website.findOne({ where: { uri } });
-
-    // check if website is already being captured
-    if (!website) {
-      website = new Website();
-      website.uri = uri;
-      await website.save();
-    }
-
     // create capture
     const capture = new URICapture();
-    capture.website = website;
+    capture.website = uri;
     capture.width = body.width;
     capture.height = body.height;
     capture.format = body.format as any;

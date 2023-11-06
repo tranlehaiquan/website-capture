@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Website } from "./entity/Website";
 import { URICapture } from "./entity/URICapture";
 
 let connected = false;
@@ -15,7 +14,7 @@ export const connectDB = async (url: string) => {
     url,
     synchronize: true,
     logging: false,
-    entities: [Website, URICapture],
+    entities: [URICapture],
     migrations: [],
     subscribers: [],
     ssl: true,
