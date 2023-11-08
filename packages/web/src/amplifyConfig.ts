@@ -1,5 +1,13 @@
+import { Amplify, Auth } from "aws-amplify";
 
-import { Amplify } from "aws-amplify";
+const config = {
+  apiGateway: {
+    REGION: import.meta.env.VITE_APP_REGION,
+    URL: import.meta.env.VITE_APP_API_URL,
+  },
+};
+
+console.log(import.meta.env.VITE_APP_USER_POOL_CLIENT_ID);
 
 Amplify.configure({
   Auth: {
@@ -10,9 +18,14 @@ Amplify.configure({
   API: {
     endpoints: [
       {
-        name: "api",
-        endpoint: import.meta.env.VITE_APP_API_URL,
-        region: import.meta.env.VITE_APP_REGION,
+        name: "capture",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION,
+        custom_header: async () => {
+          // Alternatively, with Cognito User Pools use this:
+          // return { Authorization: `Bearer ${(await Auth.currentSession()).getAccessToken().getJwtToken()}` }
+          return { Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}` }
+        }
       },
     ],
   },

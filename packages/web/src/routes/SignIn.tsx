@@ -6,6 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "aws-amplify";
 import auth from "../signals/auth";
+import Layout from "../components/Layout";
 
 interface Props {
   className?: string;
@@ -52,30 +53,32 @@ const SignIn: React.FC<Props> = () => {
   });
 
   return (
-    <div className="container mx-auto">
-      <div className="mt-20 max-w-md mx-auto">
-        <label className="mb-3 block">
-          Email:
-          <input {...register("email")} />
-          {/* error */}
-          {formState.errors.email && (
-            <p className="error">{formState.errors.email.message}</p>
-          )}
-        </label>
-        <label className="block mb-2">
-          Password:
-          <input {...register("password")} type="password" />
-          {/* error */}
-          {formState.errors.password && (
-            <p className="error">{formState.errors.password.message}</p>
-          )}
-        </label>
+    <Layout>
+      <div className="container mx-auto">
+        <div className="mt-20 max-w-md mx-auto">
+          <label className="mb-3 block">
+            Email:
+            <input {...register("email")} />
+            {/* error */}
+            {formState.errors.email && (
+              <p className="error">{formState.errors.email.message}</p>
+            )}
+          </label>
+          <label className="block mb-2">
+            Password:
+            <input {...register("password")} type="password" />
+            {/* error */}
+            {formState.errors.password && (
+              <p className="error">{formState.errors.password.message}</p>
+            )}
+          </label>
 
-        <button disabled={isLoading} onClick={onSubmit}>
-          Login
-        </button>
+          <button disabled={isLoading} onClick={onSubmit}>
+            Login
+          </button>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

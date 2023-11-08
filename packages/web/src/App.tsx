@@ -1,16 +1,18 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Root from "./routes/Root";
-import SignIn from "./components/SignIn";
-import SignUp from "./components/SignUp";
+import SignIn from "./routes/SignIn";
+import SignUp from "./routes/SignUp";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Home from "./routes/Home";
+import Capture from "./routes/Capture";
+import { API } from "aws-amplify";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <ProtectedRoute>
-        <Root />
+        <Home />
       </ProtectedRoute>
     ),
   },
@@ -21,6 +23,17 @@ const router = createBrowserRouter([
   {
     path: "/signUp",
     element: <SignUp />,
+  },
+  {
+    path: "/capture/:id",
+    element: <Capture />,
+    loader: async ({ params }) => {
+      return await API.get(
+        "capture",
+        `/capture/${params.id}?preSigned=true`,
+        {}
+      );
+    },
   },
 ]);
 
