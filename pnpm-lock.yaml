@@ -17,6 +17,9 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.438.0
         version: 3.438.0
+      '@puppeteer/browsers':
+        specifier: ^1.8.0
+        version: 1.8.0
       '@sparticuz/chromium':
         specifier: 113.0.1
         version: 113.0.1
