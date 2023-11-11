@@ -8,7 +8,10 @@ interface Props {
 const SignUp: React.FC<Props> = () => {
   return (
     <Layout>
-      <div>Sign Up</div>
+      <div className="container">
+        <p>Sign Up</p>
+        <p>Coming soon...</p>
+      </div>
     </Layout>
   );
 };

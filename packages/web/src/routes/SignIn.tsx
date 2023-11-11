@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import { Auth } from "aws-amplify";
-import auth from "../signals/auth";
+import { useDispatch, useSelector } from "react-redux";
 import Layout from "../components/Layout";
+import { login } from "../store/auth/authSlice";
+import { RootState } from "../store/store";
 
 interface Props {
   className?: string;
@@ -24,6 +25,10 @@ const schema = yup.object().shape({
 });
 
 const SignIn: React.FC<Props> = () => {
+  const dispatch = useDispatch();
+  const userInfo = useSelector(
+    (state: RootState) => state.authReducer.userInfo
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, formState } = useForm<FormData>({
     defaultValues: {
@@ -36,21 +41,15 @@ const SignIn: React.FC<Props> = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     setIsLoading(true);
-
-    try {
-      const user = await Auth.signIn(data.email, data.password);
-      console.log(user);
-      auth.value.isAuthenticated = true;
-      nav("/");
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert(String(error));
-      }
-      setIsLoading(false);
-    }
+    dispatch(login(data) as any);
   });
+
+  // redirect authenticated user to profile screen
+  useEffect(() => {
+    if (userInfo) {
+      nav("/");
+    }
+  }, [userInfo]);
 
   return (
     <Layout>
