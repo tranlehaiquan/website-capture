@@ -55,7 +55,7 @@ const init = async () => {
 init();
 
 effect(() => {
-  console.log("auth changed", auth.value);
+  // console.log("auth changed", auth.value);
 });
 
 export type Auth = typeof auth;

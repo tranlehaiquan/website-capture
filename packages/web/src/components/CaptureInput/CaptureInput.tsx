@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 interface Props {
   className?: string;
   onSubmit?: (data: any) => void;
+  disabled?: boolean;
 }
 
 const schema = yup.object().shape({
@@ -16,14 +17,15 @@ const schema = yup.object().shape({
   format: yup.string().required(),
 });
 
-const CaptureInput: React.FC<Props> = ({ className, onSubmit }) => {
+const CaptureInput: React.FC<Props> = ({ className, onSubmit, disabled }) => {
   const form = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       width: 1280,
       height: 1024,
       format: "jpg",
-    }
+    },
+    disabled,
   });
 
   return (
@@ -75,6 +77,7 @@ const CaptureInput: React.FC<Props> = ({ className, onSubmit }) => {
       <button
         className="block w-full bg-blue-500 text-white p-2 rounded-bl rounded-br"
         onClick={form.handleSubmit(onSubmit || console.log)}
+        disabled={form.formState.isSubmitting || disabled}
       >
         Capture
       </button>

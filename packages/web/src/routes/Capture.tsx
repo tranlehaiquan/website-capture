@@ -1,59 +1,66 @@
 import React, { useEffect } from "react";
-import { useLoaderData, useRevalidator } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+
+import { getCapture } from "../api-services";
 import Layout from "../components/Layout";
+import Spinner from "../components/Spinner";
 
 interface Props {
   className?: string;
 }
 
-type Capture = {
-  createdAt: string;
-  updatedAt: string;
-  id: string;
-  website: string;
-  imagePath: string;
-  status: string;
-  preSignedUrl: string;
-};
-
 const Web: React.FC<Props> = () => {
-  const data = useLoaderData();
-  const capture = data as Capture;
-  const revalidator = useRevalidator();
-  const timer = React.useRef<number | null>(null);
+  const { id } = useParams();
+  const timer = React.useRef<any>(null);
+
+  const queryCapture = useQuery({
+    queryKey: ["capture", id],
+    queryFn: () => getCapture(id as string, true),
+  });
 
   useEffect(() => {
-    if (capture.status === "inProcess") {
-      // set timer
-      timer.current = window.setInterval(() => {
-        revalidator.revalidate();
-      }, 5000);
+    if (queryCapture?.data?.status === "inProcess") {
+      timer.current = setInterval(() => {
+        queryCapture.refetch();
+      }, 10000);
+      return () => clearInterval(timer.current);
     }
+  }, [queryCapture]);
 
-    return () => {
-      if (timer.current) {
-        window.clearInterval(timer.current);
-      }
-    };
-  }, []);
+  if (queryCapture.isLoading) {
+    return (
+      <Layout>
+        <div className="container">
+          <div className="text-center my-4">
+            <Spinner />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  const { data: capture } = queryCapture;
 
   return (
     <Layout>
       <div className="container">
         <p className="text-center my-4">Screenshot details</p>
-        <p>URL: {capture.website}</p>
-        <p>Created on: {new Date(capture.createdAt).toString()}</p>
+        <p>URL: {capture?.website}</p>
+        <p>Created on: {new Date(capture?.createdAt || "").toString()}</p>
 
-        {capture.status === "inProcess" && (
+        {capture?.status === "inProcess" && (
           <div>...loading auto update every 10s</div>
         )}
 
-        {capture.status === "successful" && (
+        {capture?.status === "successful" && (
           <div className="flex justify-center items-center py-4">
             <img
-              src={capture.preSignedUrl}
+              src={capture?.preSignedUrl}
               alt={"capture website"}
               className="shadow-2xl max-w-full"
+              width={capture?.width}
+              height={capture?.height}
             />
           </div>
         )}

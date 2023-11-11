@@ -1,21 +1,24 @@
-
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import Layout from "../components/Layout";
 import CaptureInput from "../components/CaptureInput";
-import { API } from "aws-amplify";
-
+import { createCapture } from "../api-services";
+import Spinner from "../components/Spinner";
 
 export default function Home() {
   const navigate = useNavigate();
+  // Mutations
+  const mutation = useMutation({
+    mutationFn: createCapture,
+    onSuccess: (data) => {
+      if (data?.id) {
+        navigate(`/capture/${data.id}`);
+      }
+    },
+  });
 
   const handleSubmit = async (data: any) => {
-    const rs = await API.post("capture", "/capture", {
-      body: data,
-    });
-
-    if (rs?.id) {
-      navigate(`/capture/${rs.id}`);
-    }
+    mutation.mutate(data);
   };
 
   return (
@@ -28,10 +31,16 @@ export default function Home() {
               An easy way to capture a screenshot of a full webpage
             </p>
           </div>
-          <div className="flex items-start mt-6 w-1/2 mx-auto">
+          <div className="mt-6 w-1/2 mx-auto">
             <div className="w-full">
               <CaptureInput onSubmit={handleSubmit} />
             </div>
+
+            {mutation.isPending && (
+              <div className="ml-4 py-10">
+                <Spinner className="w-full" />
+              </div>
+            )}
           </div>
         </div>
       </main>
