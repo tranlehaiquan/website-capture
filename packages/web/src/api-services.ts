@@ -8,6 +8,8 @@ type Capture = {
   imagePath: string;
   status: string;
   preSignedUrl: string;
+  height: number;
+  width: number;
 };
 
 export const getCapture = (

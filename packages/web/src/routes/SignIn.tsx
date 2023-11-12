@@ -4,10 +4,13 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Layout from "../components/Layout";
-import { login } from "../store/auth/authSlice";
-import { RootState } from "../store/store";
+import { setIsAuthenticated, setUserInfo } from "../store/auth/authSlice";
+import { RootState, useDispatch } from "../store/store";
+import TextInput from "../components/TextInput";
+import { Auth } from "aws-amplify";
+import { toast } from "react-toastify";
 
 interface Props {
   className?: string;
@@ -29,7 +32,6 @@ const SignIn: React.FC<Props> = () => {
   const userInfo = useSelector(
     (state: RootState) => state.authReducer.userInfo
   );
-  const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, formState } = useForm<FormData>({
     defaultValues: {
       email: "",
@@ -40,8 +42,15 @@ const SignIn: React.FC<Props> = () => {
   const nav = useNavigate();
 
   const onSubmit = handleSubmit(async (data) => {
-    setIsLoading(true);
-    dispatch(login(data) as any);
+    try {
+      await Auth.signIn(data.email, data.password);
+      const userInfo = await Auth.currentUserInfo();
+
+      dispatch(setUserInfo(userInfo));
+      dispatch(setIsAuthenticated(true));
+    } catch (err: any) {
+      toast.error(err?.message || "Something went wrong");
+    }
   });
 
   // redirect authenticated user to profile screen
@@ -49,31 +58,42 @@ const SignIn: React.FC<Props> = () => {
     if (userInfo) {
       nav("/");
     }
-  }, [userInfo]);
+  }, [userInfo, nav]);
 
   return (
     <Layout>
       <div className="container mx-auto">
-        <div className="mt-20 max-w-md mx-auto">
+        <div className="pt-20 max-w-md mx-auto">
           <label className="mb-3 block">
-            Email:
-            <input {...register("email")} />
+            <TextInput
+              label="Email"
+              placeholder="Email"
+              {...register("email")}
+            />
             {/* error */}
             {formState.errors.email && (
-              <p className="error">{formState.errors.email.message}</p>
+              <p className="text-red-600">{formState.errors.email.message}</p>
             )}
           </label>
           <label className="block mb-2">
-            Password:
-            <input {...register("password")} type="password" />
-            {/* error */}
+            <TextInput
+              label="Password"
+              placeholder="Your password"
+              type="password"
+              {...register("password")}
+            />
             {formState.errors.password && (
-              <p className="error">{formState.errors.password.message}</p>
+              <p className="text-red-600">
+                {formState.errors.password.message}
+              </p>
             )}
           </label>
-
-          <button disabled={isLoading} onClick={onSubmit}>
-            Login
+          <button
+            disabled={formState.isSubmitting}
+            onClick={onSubmit}
+            className="btn w-full"
+          >
+            Sign In
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Auth } from "aws-amplify";
+import { toast } from "react-toastify";
 
 type userInfo = {
   username: string;
@@ -17,7 +18,7 @@ export type AuthState = {
 };
 
 const initialState: AuthState = {
-  authenticating: false,
+  authenticating: true,
   isAuthenticated: false,
   userInfo: undefined,
 };
@@ -27,16 +28,6 @@ export const initAuth = createAsyncThunk("auth/init", async () => {
   await Auth.currentSession();
   const user = await Auth.currentUserInfo();
   return user;
-});
-
-export const login = createAsyncThunk("auth/login", async (user: any) => {
-  try {
-    await Auth.signIn(user.email, user.password);
-    const userInfo = await Auth.currentUserInfo();
-    return userInfo;
-  } catch (e) {
-    alert(e);
-  }
 });
 
 export const logout = createAsyncThunk("auth/logout", async () => {
@@ -71,28 +62,10 @@ const slice = createSlice({
 
       state.userInfo = action.payload;
     });
-    builder.addCase(initAuth.rejected, (state) => {
+    builder.addCase(initAuth.rejected, (state, action) => {
       state.authenticating = false;
       state.isAuthenticated = false;
-
-      console.log("rejected init auth");
     });
-    builder.addCase(login.pending, (state) => {
-      state.authenticating = true;
-    });
-    builder.addCase(login.fulfilled, (state, action) => {
-      state.authenticating = false;
-      state.isAuthenticated = true;
-
-      state.userInfo = action.payload;
-    });
-    builder.addCase(login.rejected, (state) => {
-      state.authenticating = false;
-      state.isAuthenticated = false;
-
-      console.log("rejected login");
-    });
-
     builder.addCase(logout.fulfilled, (state) => {
       state.authenticating = false;
       state.isAuthenticated = false;

@@ -10,7 +10,7 @@ const Layout: React.FC<React.PropsWithChildren<Props>> = (props) => {
   return (
     <div>
       <Header />
-      {props.children}
+      <div className="min-h-[calc(100vh-100px)]">{props.children}</div>
       <Footer />
     </div>
   );

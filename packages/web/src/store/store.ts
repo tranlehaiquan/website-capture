@@ -1,3 +1,4 @@
+import { useDispatch as useReduxDispatch } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { authReducer } from "./auth/authSlice";
 
@@ -11,3 +12,5 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
+
+export const useDispatch = () => useReduxDispatch<AppDispatch>();

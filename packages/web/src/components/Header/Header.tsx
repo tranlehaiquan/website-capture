@@ -1,8 +1,8 @@
 import React from "react";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { useSelector } from "react-redux";
+import { RootState, useDispatch } from "../../store/store";
 import { logout } from "../../store/auth/authSlice";
 
 interface Props {

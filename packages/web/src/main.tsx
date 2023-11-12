@@ -4,7 +4,8 @@ import { Provider } from 'react-redux'
 import "./amplifyConfig";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import App from "./App";
 import { store } from "./store/store";
 
@@ -16,6 +17,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
+      <ToastContainer />
     </Provider>
   </React.StrictMode>
 );

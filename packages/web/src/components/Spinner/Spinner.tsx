@@ -2,13 +2,13 @@ import React from "react";
 import clsx from "clsx";
 
 interface SpinnerProps {
-  size?: string;
+  size?: 'loading-lg' | 'loading-md' | 'loading-sm';
   className?: string;
   fullScreen?: boolean;
 }
 
 const Spinner: React.FC<SpinnerProps> = ({
-  size = "w-12 h-12",
+  size = "loading-lg",
   className,
   fullScreen,
 }) => {
@@ -20,9 +20,11 @@ const Spinner: React.FC<SpinnerProps> = ({
         fullScreen && "h-screen"
       )}
     >
-      <div
+      {/* <div
         className={`border-t-4 border-blue-500 rounded-full animate-spin ${size}`}
-      ></div>
+      ></div> */}
+
+      <span className={`loading loading-ring ${size}`}></span>
     </div>
   );
 };
