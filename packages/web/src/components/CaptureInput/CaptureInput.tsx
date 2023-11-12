@@ -42,28 +42,46 @@ const CaptureInput: React.FC<Props> = ({ className, onSubmit, disabled }) => {
         </span>
       )}
 
-      <div className="grid grid-cols-3 p-4 border">
-        <div>
+      <div className="grid grid-cols-3 p-4 border gap-4">
+        <div className="">
           <p>Width:</p>
           <input
-            type="number"
-            className="border p-1 rounded"
+            type="range"
+            min={0}
+            max="10000"
+            className="range"
+            step="20"
             {...form.register("width")}
+          />
+
+          <input
+            type="number"
+            className="border p-1 rounded w-full"
+            value={form.watch("width")}
+            disabled
           />
         </div>
         <div>
           <p>Height:</p>
           <input
-            type="number"
-            className="border p-1 rounded"
+            type="range"
+            min={0}
+            max="10000"
+            className="range"
+            step="20"
             {...form.register("height")}
+          />
+          <input
+            type="number"
+            className="border p-1 rounded w-full"
+            value={form.watch("height")}
+            disabled
           />
         </div>
         <div>
           <p>Format:</p>
-          {/* jpg, png, webp */}
           <select
-            className="w-full border p-1 rounded"
+            className="select select-bordered w-full max-w-xs"
             {...form.register("format")}
           >
             <option value="jpg">jpg</option>

@@ -14,14 +14,15 @@ const Header: React.FC<Props> = ({ className }) => {
   const dispatch = useDispatch();
 
   return (
-    <div className={clsx(className, "py-4 bg-white border-b")}>
-      <div className="container mx-auto">
-        <div className="flex justify-between">
-          <Link to="/">
-            <h1 className="">Capture Me!</h1>
-          </Link>
-
-          <div>
+    <div className={clsx(className, "py-4")}>
+      <div className="container">
+        <div className="navbar bg-base-100">
+          <div className="flex-1">
+            <Link to="/">
+              <h1 className="">Capture Me!</h1>
+            </Link>
+          </div>
+          <div className="flex-none">
             {!auth.isAuthenticated && (
               <>
                 <Link

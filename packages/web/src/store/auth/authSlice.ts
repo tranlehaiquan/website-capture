@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Auth } from "aws-amplify";
-import { toast } from "react-toastify";
 
 type userInfo = {
   username: string;
@@ -62,7 +61,7 @@ const slice = createSlice({
 
       state.userInfo = action.payload;
     });
-    builder.addCase(initAuth.rejected, (state, action) => {
+    builder.addCase(initAuth.rejected, (state) => {
       state.authenticating = false;
       state.isAuthenticated = false;
     });

@@ -23,7 +23,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <main className="h-screen py-2 bg-[#fafbfb]">
+      <main className="h-screen py-2">
         <div className="container mx-auto">
           <div className="text-center my-10">
             <p className="text-2xl">Take a screenshot website online</p>

@@ -22,6 +22,7 @@ export function API({ stack, app }: StackContext) {// Create User Pool
   // new s3
   const bucket = new Bucket(stack, "sourceBucket", {});
 
+  // TODO: add handler for dead letter
   const deadLetterQueue = new Queue(stack, "MyDLQ");
 
   // new queue
@@ -36,6 +37,7 @@ export function API({ stack, app }: StackContext) {// Create User Pool
             external: ["@sparticuz/chromium"],
           },
         },
+        timeout: 40,
         runtime: "nodejs18.x",
       },
       // cdk for function

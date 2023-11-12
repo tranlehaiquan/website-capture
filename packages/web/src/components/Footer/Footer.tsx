@@ -7,7 +7,7 @@ interface Props {
 
 const Footer: React.FC<Props> = ({ className }) => {
   return (
-    <footer className={clsx(className, "bg-white py-4")}>
+    <footer className={clsx(className, "py-4")}>
       <div className="container">
         © 2023 Capture with ♥ for the people of the internet.
       </div>
