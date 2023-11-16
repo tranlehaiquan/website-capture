@@ -10,15 +10,21 @@ import {
 import * as lambda from "aws-cdk-lib/aws-lambda";
 
 export function API({ stack, app }: StackContext) {// Create User Pool
+  const POSTGRES_URL = new Config.Secret(stack, "POSTGRES_URL");
+
   const auth = new Cognito(stack, "Auth", {
     login: ["email"],
+    triggers: {
+      postConfirmation: "packages/functions/src/triggers/postConfirmation.handler",
+    },
   });
+
+  auth.bindForTriggers([POSTGRES_URL]);
 
   const layerChromium = new lambda.LayerVersion(stack, "chromiumLayers", {
     code: lambda.Code.fromAsset("layers/chromium"),
   });
 
-  const POSTGRES_URL = new Config.Secret(stack, "POSTGRES_URL");
   // new s3
   const bucket = new Bucket(stack, "sourceBucket", {});
 

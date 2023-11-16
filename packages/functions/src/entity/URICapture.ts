@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 import { BaseEntityCustom } from "./BaseEntityCustom";
 import { Format, Status } from "src/constants";
 
