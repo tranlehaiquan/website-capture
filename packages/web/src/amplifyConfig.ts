@@ -1,4 +1,5 @@
-import { Amplify, Auth } from "aws-amplify";
+import { Amplify } from "aws-amplify";
+import { fetchAuthSession } from "aws-amplify/auth";
 
 const config = {
   apiGateway: {
@@ -7,26 +8,42 @@ const config = {
   },
 };
 
-console.log(import.meta.env.VITE_APP_USER_POOL_CLIENT_ID);
+console.log({
+  userPoolId: import.meta.env.VITE_APP_USER_POOL_ID,
+  userPoolClientId: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
+});
 
-Amplify.configure({
-  Auth: {
-    region: import.meta.env.VITE_APP_REGION,
-    userPoolId: import.meta.env.VITE_APP_USER_POOL_ID,
-    userPoolWebClientId: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
-  },
-  API: {
-    endpoints: [
+console.log({
+  aws_cognito_region: import.meta.env.VITE_APP_REGION,
+  aws_user_pools_id: import.meta.env.VITE_APP_USER_POOL_ID,
+  aws_user_pools_web_client_id: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
+});
+
+Amplify.configure(
+  {
+    aws_cognito_region: import.meta.env.VITE_APP_REGION,
+    aws_user_pools_id: import.meta.env.VITE_APP_USER_POOL_ID,
+    aws_user_pools_web_client_id: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
+    aws_cloud_logic_custom: [
       {
         name: "capture",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION,
-        custom_header: async () => {
-          // Alternatively, with Cognito User Pools use this:
-          // return { Authorization: `Bearer ${(await Auth.currentSession()).getAccessToken().getJwtToken()}` }
-          return { Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}` }
-        }
       },
     ],
   },
-});
+  {
+    API: {
+      REST: {
+        headers: async () => {
+          const authToken = (
+            await fetchAuthSession()
+          ).tokens?.idToken?.toString();
+          return { Authorization: `Bearer ${authToken}` };
+        },
+      },
+    },
+  }
+);
+
+console.log("Amplify.configure", Amplify.getConfig());

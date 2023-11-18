@@ -51,7 +51,7 @@ const Header: React.FC<Props> = ({ className }) => {
                     Dashboard
                   </Link>
 
-                  <p>{auth.userInfo?.attributes.email}</p>
+                  <p>{auth.userInfo?.email}</p>
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded ml-2"
                     onClick={() => {

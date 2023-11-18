@@ -1,4 +1,4 @@
-import { API } from "aws-amplify";
+import { get, post } from "aws-amplify/api";
 
 type Capture = {
   createdAt: string;
@@ -12,15 +12,17 @@ type Capture = {
   width: number;
 };
 
-export const getCapture = (
+export const getCapture = async (
   captureId: string,
   preSigned = true
 ): Promise<Capture> => {
-  return API.get(
-    "capture",
-    `/capture/${captureId}?preSigned=${!!preSigned}`,
-    {}
-  );
+  const restOperation = get({
+    apiName: "capture",
+    path: `/capture/${captureId}?preSigned=${!!preSigned}`,
+  });
+
+  const { body } = await restOperation.response;
+  return (await body.json()) as Capture;
 };
 
 type CreateCaptureData = {
@@ -30,12 +32,24 @@ type CreateCaptureData = {
   format: string;
 };
 
-export const createCapture = (data: CreateCaptureData) => {
-  return API.post("capture", "/capture", {
-    body: data,
+export const createCapture = async (data: CreateCaptureData) => {
+  const restOperation = post({
+    apiName: "capture",
+    path: "/capture",
+    options: {
+      body: data,
+    },
   });
+
+  const { body } = await restOperation.response;
+  return body.json();
 };
 
-export const getCaptureList = (): Promise<Capture[]> => {
-  return API.get("capture", "/capture", {});
+export const getCaptureList = async (): Promise<Capture[]> => {
+  const { body } = await get({
+    apiName: "capture",
+    path: "/capture",
+  }).response;
+
+  return (await body.json()) as Capture[];
 };

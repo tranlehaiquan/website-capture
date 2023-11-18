@@ -8,6 +8,7 @@ import {
   Cognito,
 } from "sst/constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import { Duration } from "aws-cdk-lib";
 
 export function API({ stack, app }: StackContext) {// Create User Pool
   const POSTGRES_URL = new Config.Secret(stack, "POSTGRES_URL");
@@ -53,15 +54,15 @@ export function API({ stack, app }: StackContext) {// Create User Pool
         }
       }
     },
-    // cdk for queue
     cdk: {
       queue: {
+        visibilityTimeout: Duration.seconds(40),
         deadLetterQueue: {
           maxReceiveCount: 3,
           queue: deadLetterQueue.cdk.queue,
         },
-      },
-    },
+      }
+    }
   });
 
   const api = new Api(stack, "api", {

@@ -1,13 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { Auth } from "aws-amplify";
+import { signOut } from "aws-amplify/auth";
+import { fetchAuthSession } from "aws-amplify/auth";
+
+async function currentSession() {
+  const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {};
+
+  return {
+    accessToken,
+    idToken,
+  };
+}
 
 type userInfo = {
   username: string;
-  attributes: {
-    sub: string;
-    email_verified: boolean;
-    email: string;
-  };
+  sub: string;
+  email_verified: boolean;
+  email: string;
 };
 
 export type AuthState = {
@@ -24,14 +32,16 @@ const initialState: AuthState = {
 
 // create async thunk
 export const initAuth = createAsyncThunk("auth/init", async () => {
-  await Auth.currentSession();
-  const user = await Auth.currentUserInfo();
-  return user;
+  const response = (await fetchAuthSession()).tokens;
+
+  if(!response) throw new Error("No user");
+
+  return response?.idToken?.payload as any;
 });
 
 export const logout = createAsyncThunk("auth/logout", async () => {
   try {
-    await Auth.signOut();
+    await signOut();
   } catch (e) {
     alert(e);
   }

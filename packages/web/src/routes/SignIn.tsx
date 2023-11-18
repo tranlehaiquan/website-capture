@@ -9,7 +9,7 @@ import Layout from "../components/Layout";
 import { setIsAuthenticated, setUserInfo } from "../store/auth/authSlice";
 import { RootState, useDispatch } from "../store/store";
 import TextInput from "../components/TextInput";
-import { Auth } from "aws-amplify";
+import { fetchUserAttributes, signIn } from "aws-amplify/auth";
 import { toast } from "react-toastify";
 
 interface Props {
@@ -43,8 +43,11 @@ const SignIn: React.FC<Props> = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await Auth.signIn(data.email, data.password);
-      const userInfo = await Auth.currentUserInfo();
+      await signIn({
+        username: data.email,
+        password: data.password,
+      });
+      const userInfo = await fetchUserAttributes();
 
       dispatch(setUserInfo(userInfo));
       dispatch(setIsAuthenticated(true));

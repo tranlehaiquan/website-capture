@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Layout from "../components/Layout";
 import TextInput from "../components/TextInput";
-import { Auth } from "aws-amplify";
+import { confirmSignUp } from "aws-amplify/auth";
 import { toast } from "react-toastify";
 
 interface Props {
@@ -30,7 +30,10 @@ const VerifySignUp: React.FC<Props> = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await Auth.confirmSignUp(email!, data.code);
+      await confirmSignUp({
+        username: email!,
+        confirmationCode: data.code,
+      });
       toast.success("Account created successfully");
       nav("/signIn");
     } catch (err: any) {

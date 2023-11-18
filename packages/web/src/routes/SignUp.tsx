@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Layout from "../components/Layout";
 import TextInput from "../components/TextInput";
-import { Auth } from "aws-amplify";
+import { signUp } from "aws-amplify/auth";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -37,7 +37,7 @@ const SignUp: React.FC<Props> = () => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setIsLoading(true);
-      await Auth.signUp({
+      await signUp({
         username: data.email,
         password: data.password,
       });
