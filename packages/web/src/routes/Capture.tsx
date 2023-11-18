@@ -50,7 +50,10 @@ const Web: React.FC<Props> = () => {
         <p>Created on: {new Date(capture?.createdAt || "").toString()}</p>
 
         {capture?.status === "inProcess" && (
-          <div>...loading auto update every 10s</div>
+          <div>
+            <Spinner />
+            <span>...loading auto update every 10s</span>
+          </div>
         )}
 
         {capture?.status === "successful" && (

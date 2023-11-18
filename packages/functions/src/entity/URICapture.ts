@@ -1,6 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { BaseEntityCustom } from "./BaseEntityCustom";
 import { Format, Status } from "src/constants";
+import { User } from "./User";
 
 @Entity()
 export class URICapture extends BaseEntityCustom {
@@ -40,4 +47,11 @@ export class URICapture extends BaseEntityCustom {
     default: Format.jpeg,
   })
   format: Format;
+
+  @ManyToOne(() => User, (user) => user.uricaptures, { nullable: true })
+  @JoinColumn({ name: "ownerId" }) // this is the column that will hold the foreign key
+  owner?: User;
+
+  @Column({ type: "varchar", nullable: true })
+  ownerId?: string;
 }

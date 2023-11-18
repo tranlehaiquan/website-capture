@@ -91,6 +91,7 @@ export function API({ stack, app }: StackContext) {// Create User Pool
     },
     routes: {
       "POST /capture": "packages/functions/src/capture/post.handler",
+      "GET /capture": "packages/functions/src/capture/getAll.handler",
       "GET /capture/{id}": "packages/functions/src/capture/get.handler",
       "POST /test": "packages/functions/src/test.handler",
     },

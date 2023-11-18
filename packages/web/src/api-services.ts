@@ -7,7 +7,7 @@ type Capture = {
   website: string;
   imagePath: string;
   status: string;
-  preSignedUrl: string;
+  preSignedUrl?: string;
   height: number;
   width: number;
 };
@@ -34,4 +34,8 @@ export const createCapture = (data: CreateCaptureData) => {
   return API.post("capture", "/capture", {
     body: data,
   });
+};
+
+export const getCaptureList = (): Promise<Capture[]> => {
+  return API.get("capture", "/capture", {});
 };

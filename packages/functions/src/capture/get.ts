@@ -16,6 +16,7 @@ export const handler = ApiHandler(async (_evt) => {
   const POSTGRES_URL = Config.POSTGRES_URL;
   // connect db
   await connectDB(POSTGRES_URL);
+
   // get url params
   const params = _evt.queryStringParameters || {};
   const captureId = id || params.id;

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { initAuth } from "./store/auth/authSlice";
 import { useDispatch } from "./store/store";
 import VerifySignUp from "./routes/VerifySignUp";
+import Dashboard from "./routes/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
   {
     path: "/capture/:id",
     element: <Capture />,
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
   },
 ]);
 

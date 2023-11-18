@@ -41,17 +41,26 @@ const Header: React.FC<Props> = ({ className }) => {
             )}
 
             {auth.isAuthenticated && (
-              <div className="flex items-center">
-                <p>{auth.userInfo?.attributes.email}</p>
-                {/* logout button */}
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded ml-2"
-                  onClick={() => {
-                    dispatch(logout() as any);
-                  }}
-                >
-                  Logout
-                </button>
+              <div>
+                {/* Link to Dashboard */}
+                <div className="flex items-center">
+                  <Link
+                    className="text-blue-500 py-2 px-4 rounded mr-2"
+                    to="/dashboard"
+                  >
+                    Dashboard
+                  </Link>
+
+                  <p>{auth.userInfo?.attributes.email}</p>
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded ml-2"
+                    onClick={() => {
+                      dispatch(logout() as any);
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
             )}
           </div>

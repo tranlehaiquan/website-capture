@@ -6,6 +6,7 @@ import * as yup from "yup";
 
 import { connectDB } from "../data-source";
 import { URICapture } from "../entity/URICapture";
+import getUserFromEvent from "src/utils/getUserFromEvent";
 
 const bodySchema = yup.object().shape({
   uri: yup.string().required(),
@@ -19,10 +20,11 @@ const sqsClient = new SQSClient({});
 /**
  * New Capture with input bodySchema
  * This handle will be called when you make a POST request to /capture
- * 
+ *
  */
 export const handler = ApiHandler(async (event) => {
   await connectDB(Config.POSTGRES_URL);
+  const user = await getUserFromEvent(event);
 
   // get body from event
   const bodyParsed = JSON.parse(event.body || "{}");
@@ -39,6 +41,9 @@ export const handler = ApiHandler(async (event) => {
     capture.width = body.width;
     capture.height = body.height;
     capture.format = body.format as any;
+    if (user) {
+      capture.owner = user;
+    }
     await capture.save();
 
     // send message to SQS
