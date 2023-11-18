@@ -19,6 +19,7 @@ console.log({
   aws_user_pools_web_client_id: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
 });
 
+// follow this https://docs.amplify.aws/javascript/prev/build-a-backend/restapi/customize-authz/
 Amplify.configure(
   {
     aws_cognito_region: import.meta.env.VITE_APP_REGION,
