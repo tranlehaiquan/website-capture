@@ -32,7 +32,7 @@ type CreateCaptureData = {
   format: string;
 };
 
-export const createCapture = async (data: CreateCaptureData) => {
+export const createCapture = async (data: CreateCaptureData): Promise<any> => {
   const restOperation = post({
     apiName: "capture",
     path: "/capture",

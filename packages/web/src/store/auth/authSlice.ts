@@ -2,15 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { signOut } from "aws-amplify/auth";
 import { fetchAuthSession } from "aws-amplify/auth";
 
-async function currentSession() {
-  const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {};
-
-  return {
-    accessToken,
-    idToken,
-  };
-}
-
 type userInfo = {
   username: string;
   sub: string;
