@@ -6,6 +6,7 @@ interface Props {
   placeholder?: string;
   type?: string;
   name?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const TextInput = React.forwardRef<HTMLInputElement, Props>(({

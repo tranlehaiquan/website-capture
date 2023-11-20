@@ -10,6 +10,7 @@ type Capture = {
   preSignedUrl?: string;
   height: number;
   width: number;
+  format: string;
 };
 
 export const getCapture = async (

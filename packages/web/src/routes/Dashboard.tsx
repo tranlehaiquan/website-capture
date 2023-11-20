@@ -18,7 +18,9 @@ const Dashboard: React.FC<Props> = () => {
   if (queryCaptureList.isLoading) {
     return (
       <Layout>
-        <Spinner />
+        <div className="flex items-center">
+          <Spinner />
+        </div>
       </Layout>
     );
   }
@@ -34,17 +36,23 @@ const Dashboard: React.FC<Props> = () => {
               <th>Date</th>
               <th>Website</th>
               <th>Status</th>
+              <th>Width x Height</th>
+              <th>Type Image</th>
             </tr>
           </thead>
           <tbody>
             {queryCaptureList.data?.map((capture) => (
               <tr key={capture.id}>
                 <td>
-                  <Link to={`/capture/${capture.id}`} className="text-blue-500">{capture.id}</Link>
+                  <Link to={`/capture/${capture.id}`} className="text-blue-500">
+                    {capture.id}
+                  </Link>
                 </td>
                 <td>{new Date(capture.createdAt).toString()}</td>
                 <td>{capture.website}</td>
                 <td>{capture.status}</td>
+                <td>{`${capture.width} x ${capture.height}`}</td>
+                <td>{capture.format}</td>
               </tr>
             ))}
           </tbody>

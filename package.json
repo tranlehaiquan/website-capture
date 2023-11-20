@@ -12,18 +12,19 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@puppeteer/browsers": "^1.8.0",
     "@tsconfig/node18": "^18.2.2",
     "aws-cdk-lib": "2.101.1",
     "constructs": "10.2.69",
     "sst": "2.36.1",
-    "typescript": "^5.2.2",
-    "@puppeteer/browsers": "^1.8.0"
+    "typescript": "^5.2.2"
   },
   "workspaces": [
     "packages/*"
   ],
   "dependencies": {
     "@aws-sdk/client-s3": "^3.438.0",
+    "@aws-sdk/client-scheduler": "^3.454.0",
     "@aws-sdk/client-sqs": "^3.438.0",
     "@aws-sdk/s3-request-presigner": "^3.438.0",
     "@sparticuz/chromium": "113.0.1",

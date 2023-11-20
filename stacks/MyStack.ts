@@ -6,17 +6,23 @@ import {
   StaticSite,
   Config,
   Cognito,
+  Function,
 } from "sst/constructs";
+import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { attachPermissionsToRole } from "sst/constructs";
+
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Duration } from "aws-cdk-lib";
 
-export function API({ stack, app }: StackContext) {// Create User Pool
+export function API({ stack, app }: StackContext) {
+  // Create User Pool
   const POSTGRES_URL = new Config.Secret(stack, "POSTGRES_URL");
 
   const auth = new Cognito(stack, "Auth", {
     login: ["email"],
     triggers: {
-      postConfirmation: "packages/functions/src/triggers/postConfirmation.handler",
+      postConfirmation:
+        "packages/functions/src/triggers/postConfirmation.handler",
     },
   });
 
@@ -32,6 +38,22 @@ export function API({ stack, app }: StackContext) {// Create User Pool
   // TODO: add handler for dead letter
   const deadLetterQueue = new Queue(stack, "MyDLQ");
 
+  // Create an IAM role
+  const roleExecuteFunction = new Role(stack, "ApiRole", {
+    assumedBy: new ServicePrincipal("scheduler.amazonaws.com"),
+    managedPolicies: [
+      {
+        managedPolicyArn:
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaRole",
+      },
+    ],
+  });
+
+  // new function for EventBridge scheduler
+  const imageCleaner = new Function(stack, "imageCollector", {
+    handler: "packages/functions/src/triggers/imageCleaner.handler",
+  });
+
   // new queue
   const queue = new Queue(stack, "queue", {
     consumer: {
@@ -46,13 +68,18 @@ export function API({ stack, app }: StackContext) {// Create User Pool
         },
         timeout: 40,
         runtime: "nodejs18.x",
+        environment: {
+          TARGET_ARN: imageCleaner.functionArn,
+          TARGET_ROLE_ARN: roleExecuteFunction.roleArn,
+        },
+        permissions: ["scheduler:CreateSchedule", "iam:PassRole"],
       },
       // cdk for function
       cdk: {
         eventSource: {
           reportBatchItemFailures: true,
-        }
-      }
+        },
+      },
     },
     cdk: {
       queue: {
@@ -61,8 +88,8 @@ export function API({ stack, app }: StackContext) {// Create User Pool
           maxReceiveCount: 3,
           queue: deadLetterQueue.cdk.queue,
         },
-      }
-    }
+      },
+    },
   });
 
   const api = new Api(stack, "api", {
@@ -84,7 +111,7 @@ export function API({ stack, app }: StackContext) {// Create User Pool
           },
         },
         layers: [layerChromium],
-        runtime: 'nodejs18.x',
+        runtime: "nodejs18.x",
         timeout: 120,
         memorySize: 1024 * 2,
       },
@@ -118,10 +145,12 @@ export function API({ stack, app }: StackContext) {// Create User Pool
     DeadLetterQueue: deadLetterQueue.queueName,
     UserPoolId: auth.userPoolId,
     UserPoolClientId: auth.userPoolClientId,
+    imageCleanerArn: imageCleaner.functionArn,
+    imageCleanerArnRoleArn: roleExecuteFunction.roleArn,
   });
 
   return {
     api,
     bucket,
-  }
+  };
 }

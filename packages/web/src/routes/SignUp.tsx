@@ -74,6 +74,11 @@ const SignUp: React.FC<Props> = () => {
               placeholder="Your password"
               type="password"
               {...register("password")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  onSubmit();
+                }
+              }}
             />
             {formState.errors.password && (
               <p className="text-red-600">

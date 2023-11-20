@@ -4,11 +4,17 @@ import { Config } from "sst/node/config";
 import { URICapture } from "./entity/URICapture";
 
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  SchedulerClient,
+  CreateScheduleCommand,
+  type CreateScheduleCommandInput,
+} from "@aws-sdk/client-scheduler"; // ES Modules import
 import { Bucket } from "sst/node/bucket";
 import getWorker from "@website-capture/core/puppeteerWorker";
 import { Status } from "./constants";
 
 const s3Client = new S3Client({});
+const schedulerClient = new SchedulerClient({});
 
 export const handler = async (_evt: SQSEvent) => {
   const records = _evt.Records;
@@ -66,6 +72,40 @@ export const handler = async (_evt: SQSEvent) => {
           capture.status = Status.successful;
           capture.imagePath = key;
           await capture.save();
+
+          // now + 1 minute
+          const date = new Date();
+          date.setMinutes(date.getMinutes() + 1);
+          // format yyyy-mm-ddThh:mm:ss
+          const dateISO = date.toISOString().split(".")[0];
+          // format at(yyyy-mm-ddThh:mm:ss)
+          const ScheduleExpression = `at(${dateISO})`;
+
+          // schedule deletion
+          const inputScheduler: CreateScheduleCommandInput = {
+            Name: `cleanImage${key}`, // required
+            ScheduleExpression,
+            Description: `delete Image ${key}`,
+            Target: {
+              // Target
+              Arn: process.env.TARGET_ARN, // required
+              RoleArn: process.env.TARGET_ROLE_ARN,
+              RetryPolicy: {
+                MaximumRetryAttempts: 3,
+              },
+              Input: JSON.stringify({
+                key,
+              }),
+            },
+            FlexibleTimeWindow: {
+              Mode: "OFF",
+              MaximumWindowInMinutes: undefined,
+            },
+            ActionAfterCompletion: 'DELETE'
+          };
+
+          const commandScheduler = new CreateScheduleCommand(inputScheduler);
+          await schedulerClient.send(commandScheduler);
         } catch (e) {
           console.error(e);
           capture.status = Status.failed;
@@ -84,9 +124,8 @@ export const handler = async (_evt: SQSEvent) => {
   }
   await browser.close();
 
-  console.log({
-    batchItemFailures: failedIDs,
-  });
+  // console.log(process.env);
+
   return {
     batchItemFailures: failedIDs,
   };
