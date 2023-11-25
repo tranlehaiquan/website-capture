@@ -52,6 +52,7 @@ export function API({ stack, app }: StackContext) {
   // new function for EventBridge scheduler
   const imageCleaner = new Function(stack, "imageCollector", {
     handler: "packages/functions/src/triggers/imageCleaner.handler",
+    bind: [POSTGRES_URL, bucket],
   });
 
   // new queue

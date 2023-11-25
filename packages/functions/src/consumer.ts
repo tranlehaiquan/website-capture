@@ -83,9 +83,9 @@ export const handler = async (_evt: SQSEvent) => {
 
           // schedule deletion
           const inputScheduler: CreateScheduleCommandInput = {
-            Name: `cleanImage${key}`, // required
+            Name: `cleanImage${captureId}`, // required
             ScheduleExpression,
-            Description: `delete Image ${key}`,
+            Description: `delete Image ${captureId}`,
             Target: {
               // Target
               Arn: process.env.TARGET_ARN, // required
@@ -94,7 +94,7 @@ export const handler = async (_evt: SQSEvent) => {
                 MaximumRetryAttempts: 3,
               },
               Input: JSON.stringify({
-                key,
+                captureId,
               }),
             },
             FlexibleTimeWindow: {

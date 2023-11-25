@@ -9,6 +9,7 @@
 mkdir -p layers/chromium
 
 # download release from @sparticuz/chromium then extract to layers/chromium
+# https://github.com/Sparticuz/chromium/releases/tag/v119.0.0
 # result will be layers/chromium/nodejs
 
 # pnpm install
@@ -19,8 +20,9 @@ pnpm install
 npx @puppeteer/browsers install chromium@latest --path /tmp/localChromium
 ```
 
-```typescript
-const YOUR_LOCAL_CHROMIUM_PATH = "/tmp/localChromium/...";
+```bash
+mkdir -p localChromium
+# copy chromium to localChromium
 ```
 
 Set sst secrets

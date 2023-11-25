@@ -56,6 +56,18 @@ const Web: React.FC<Props> = () => {
           </div>
         )}
 
+        {capture?.status === "failed" && (
+          <div>
+            <p>Failed to capture website</p>
+          </div>
+        )}
+
+        {capture?.status === "deleted" && (
+          <div className="p-20 text-center">
+            <h3 className="py-2 text-xl">Image was expire!</h3>
+          </div>
+        )}
+
         {capture?.status === "successful" && (
           <div className="flex justify-center items-center py-4">
             <img
