@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getCapture } from "../api-services";
 import Layout from "../components/Layout";
 import Spinner from "../components/Spinner";
+import notFound from "../assets/folder-error-svgrepo-com.svg";
 
 interface Props {
   className?: string;
@@ -63,8 +64,17 @@ const Web: React.FC<Props> = () => {
         )}
 
         {capture?.status === "deleted" && (
-          <div className="p-20 text-center">
-            <h3 className="py-2 text-xl">Image was expire!</h3>
+          <div>
+            <h3 className="py-2 text-xl">Your image was expire.</h3>
+            <div className="flex items-center justify-center py-40">
+              <img
+                src={notFound}
+                alt="not found"
+                className="max-w-full"
+                width={300}
+                height={300}
+              />
+            </div>
           </div>
         )}
 

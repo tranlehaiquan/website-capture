@@ -73,9 +73,9 @@ export const handler = async (_evt: SQSEvent) => {
           capture.imagePath = key;
           await capture.save();
 
-          // now + 1 minute
+          // now + 1 day
           const date = new Date();
-          date.setMinutes(date.getMinutes() + 1);
+          date.setDate(date.getDate() + 1);
           // format yyyy-mm-ddThh:mm:ss
           const dateISO = date.toISOString().split(".")[0];
           // format at(yyyy-mm-ddThh:mm:ss)
@@ -123,8 +123,6 @@ export const handler = async (_evt: SQSEvent) => {
     await pages[i].close();
   }
   await browser.close();
-
-  // console.log(process.env);
 
   return {
     batchItemFailures: failedIDs,

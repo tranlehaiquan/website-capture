@@ -14,9 +14,9 @@
   "devDependencies": {
     "@puppeteer/browsers": "^1.8.0",
     "@tsconfig/node18": "^18.2.2",
-    "aws-cdk-lib": "2.101.1",
-    "constructs": "10.2.69",
-    "sst": "2.36.1",
+    "aws-cdk-lib": "2.110.1",
+    "constructs": "10.3.0",
+    "sst": "2.36.5",
     "typescript": "^5.2.2"
   },
   "workspaces": [

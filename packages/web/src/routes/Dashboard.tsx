@@ -18,7 +18,7 @@ const Dashboard: React.FC<Props> = () => {
   if (queryCaptureList.isLoading) {
     return (
       <Layout>
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
           <Spinner />
         </div>
       </Layout>

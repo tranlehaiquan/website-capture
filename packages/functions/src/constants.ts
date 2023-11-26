@@ -3,6 +3,7 @@ export enum Status {
   "successful" = "successful",
   "failed" = "failed",
   "deleted" = "deleted",
+  "expired" = "expired",
 }
 
 export enum Format {

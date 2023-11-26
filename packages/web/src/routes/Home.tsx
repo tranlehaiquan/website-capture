@@ -18,7 +18,7 @@ export default function Home() {
   });
 
   const handleSubmit = async (data: any) => {
-    mutation.mutate(data);
+    await mutation.mutateAsync(data);
   };
 
   return (
