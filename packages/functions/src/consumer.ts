@@ -1,7 +1,7 @@
 import { SQSEvent } from "aws-lambda";
 import { connectDB } from "./data-source";
 import { Config } from "sst/node/config";
-import { URICapture } from "./entity/URICapture";
+import { URICapture } from "@website-capture/core/entity/URICapture";
 
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import {

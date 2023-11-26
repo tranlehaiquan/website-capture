@@ -5,7 +5,7 @@ import { Queue } from "sst/node/queue";
 import * as yup from "yup";
 
 import { connectDB } from "../data-source";
-import { URICapture } from "../entity/URICapture";
+import { URICapture } from "@website-capture/core/entity/URICapture";
 import getUserFromEvent from "src/utils/getUserFromEvent";
 
 const bodySchema = yup.object().shape({

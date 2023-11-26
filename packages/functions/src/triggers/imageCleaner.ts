@@ -1,6 +1,6 @@
 import { Status } from "src/constants";
 import { connectDB } from "src/data-source";
-import { URICapture } from "src/entity/URICapture";
+import { URICapture } from "@website-capture/core/entity/URICapture";
 import { ApiHandler } from "sst/node/api";
 import { Config } from "sst/node/config";
 import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';

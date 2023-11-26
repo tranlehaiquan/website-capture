@@ -1,4 +1,4 @@
-import { User } from "../entity/User";
+import { User } from "@website-capture/core/entity/User";
 import { connectDB } from "../data-source";
 import { Config } from "sst/node/config";
 

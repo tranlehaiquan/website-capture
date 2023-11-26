@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { BaseEntityCustom } from "./BaseEntityCustom";
-import { Format } from "src/constants";
+import { Format } from "../constants";
 
 @Entity()
 export class RecursiveCapture extends BaseEntityCustom {

@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { BaseEntityCustom } from "./BaseEntityCustom";
-import { Format, Status } from "src/constants";
+import { Format, Status } from "../constants";
 import { User } from "./User";
 
 @Entity()

@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { URICapture } from "./entity/URICapture";
-import { User } from "./entity/User";
+import { URICapture } from "@website-capture/core/entity/URICapture";
+import { User } from "@website-capture/core/entity/User";
 
 let connected = false;
 
