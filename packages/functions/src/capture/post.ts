@@ -6,7 +6,7 @@ import * as yup from "yup";
 
 import { connectDB } from "../data-source";
 import { URICapture } from "@website-capture/core/entity/URICapture";
-import getUserFromEvent from "src/utils/getUserFromEvent";
+import { getUserFromEvent } from "@website-capture/core/utils";
 
 const bodySchema = yup.object().shape({
   uri: yup.string().required(),

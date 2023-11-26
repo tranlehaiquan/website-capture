@@ -12,6 +12,7 @@
     "sst": "2.36.5"
   },
   "dependencies": {
+    "jwt-decode": "^4.0.0",
     "zod": "^3.22.3"
   }
 }

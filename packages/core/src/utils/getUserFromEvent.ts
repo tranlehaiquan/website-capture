@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { User } from "@website-capture/core/entity/User";
+import { User } from "../entity/User";
 
 const getUserFromEvent = async (event: any) => {
   // headers.authorization
