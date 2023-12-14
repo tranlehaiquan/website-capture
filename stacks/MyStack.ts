@@ -9,7 +9,6 @@ import {
   Function,
 } from "sst/constructs";
 import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import { attachPermissionsToRole } from "sst/constructs";
 
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Duration } from "aws-cdk-lib";
