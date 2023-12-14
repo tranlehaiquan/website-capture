@@ -11,7 +11,7 @@ import {
 } from "@aws-sdk/client-scheduler"; // ES Modules import
 import { Bucket } from "sst/node/bucket";
 import getWorker from "@website-capture/core/puppeteerWorker";
-import { Status } from "./constants";
+import { Status } from "@website-capture/core/constants";
 
 const s3Client = new S3Client({});
 const schedulerClient = new SchedulerClient({});

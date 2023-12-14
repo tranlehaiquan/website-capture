@@ -11,17 +11,21 @@ const config = {
 // follow this https://docs.amplify.aws/javascript/prev/build-a-backend/restapi/customize-authz/
 Amplify.configure(
   {
-    aws_cognito_region: import.meta.env.VITE_APP_REGION,
-    aws_user_pools_id: import.meta.env.VITE_APP_USER_POOL_ID,
-    aws_user_pools_web_client_id: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
-    aws_cloud_logic_custom: [
-      {
-        name: "capture",
-        endpoint: config.apiGateway.URL,
-        region: config.apiGateway.REGION,
-      },
-    ],
-  } as any,
+    Auth: {
+      Cognito: {
+        userPoolClientId: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
+        userPoolId: import.meta.env.VITE_APP_USER_POOL_ID,
+      }
+    },
+    API: {
+      REST: {
+        "capture": {
+          endpoint: config.apiGateway.URL,
+          region: config.apiGateway.REGION,
+        }
+      }
+    }
+  },
   {
     API: {
       REST: {

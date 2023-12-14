@@ -16,10 +16,10 @@ const Header: React.FC<Props> = ({ className }) => {
   return (
     <div className={clsx(className, "py-4")}>
       <div className="container">
-        <div className="navbar bg-base-100">
+        <div className="navbar bg-base-100 px-0">
           <div className="flex-1">
             <Link to="/">
-              <h1 className="">Capture Me!</h1>
+              <h1 className="text-xl">Capture Me!</h1>
             </Link>
           </div>
           <div className="flex-none">

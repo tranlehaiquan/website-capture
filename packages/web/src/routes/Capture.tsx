@@ -46,7 +46,7 @@ const Web: React.FC<Props> = () => {
   return (
     <Layout>
       <div className="container">
-        <p className="text-center my-4">Screenshot details</p>
+        {/* <p className="text-center my-4">Screenshot details</p> */}
         <p>URL: {capture?.website}</p>
         <p>Created on: {new Date(capture?.createdAt || "").toString()}</p>
 
