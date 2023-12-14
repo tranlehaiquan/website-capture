@@ -1,4 +1,4 @@
-import { Status } from "src/constants";
+import { Status } from "@website-capture/core/constants";
 import { connectDB } from "src/data-source";
 import { URICapture } from "@website-capture/core/entity/URICapture";
 import { ApiHandler } from "sst/node/api";
