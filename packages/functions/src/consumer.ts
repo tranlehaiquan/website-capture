@@ -1,7 +1,7 @@
 import { SQSEvent } from "aws-lambda";
 import { connectDB } from "./data-source";
 import { Config } from "sst/node/config";
-import { URICapture } from "@website-capture/core/entity/URICapture";
+import { Capture } from "@website-capture/core/entity/Capture";
 
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import {
@@ -31,7 +31,7 @@ export const handler = async (_evt: SQSEvent) => {
       const body = JSON.parse(record.body);
       const captureId = body.captureId;
 
-      const capture = await URICapture.findOneBy({ id: captureId });
+      const capture = await Capture.findOneBy({ id: captureId });
       if (capture) {
         try {
           let format = capture.format ? capture.format : "jpeg";

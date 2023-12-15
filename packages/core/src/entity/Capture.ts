@@ -10,7 +10,7 @@ import { Format, Status } from "../constants";
 import { User } from "./User";
 
 @Entity()
-export class URICapture extends BaseEntityCustom {
+export class Capture extends BaseEntityCustom {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 

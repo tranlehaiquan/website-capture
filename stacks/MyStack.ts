@@ -42,8 +42,7 @@ export function API({ stack, app }: StackContext) {
     assumedBy: new ServicePrincipal("scheduler.amazonaws.com"),
     managedPolicies: [
       {
-        managedPolicyArn:
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaRole",
+        managedPolicyArn: "arn:aws:iam::aws:policy/service-role/AWSLambdaRole",
       },
     ],
   });
@@ -122,6 +121,9 @@ export function API({ stack, app }: StackContext) {
       "GET /capture": "packages/functions/src/capture/getAll.handler",
       "GET /capture/{id}": "packages/functions/src/capture/get.handler",
       "POST /test": "packages/functions/src/test.handler",
+      "POST /recurring-capture": "packages/functions/src/recurringCapture/post.handler",
+      "GET /recurring-capture/{id}": "packages/functions/src/recurringCapture/get.handler",
+      "PUT /recurring-capture/{id}": "packages/functions/src/recurringCapture/put.handler",
     },
   });
 

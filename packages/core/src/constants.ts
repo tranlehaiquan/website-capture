@@ -11,3 +11,14 @@ export enum Format {
   "jpeg" = "jpeg",
   "webp" = "webp",
 }
+
+// format in array
+export const SUPPORT_IMAGE_FORMATS = Object.values(Format);
+
+export enum Schedule {
+  "daily" = "daily",
+  "weekly" = "weekly",
+  "monthly" = "monthly",
+}
+
+export const SUPPORT_SCHEDULE = Object.values(Schedule);

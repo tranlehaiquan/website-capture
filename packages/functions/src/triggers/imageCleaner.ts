@@ -1,6 +1,6 @@
 import { Status } from "@website-capture/core/constants";
 import { connectDB } from "src/data-source";
-import { URICapture } from "@website-capture/core/entity/URICapture";
+import { Capture } from "@website-capture/core/entity/Capture";
 import { ApiHandler } from "sst/node/api";
 import { Config } from "sst/node/config";
 import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
@@ -21,7 +21,7 @@ export const handler = ApiHandler(async (event: any) => {
 
   const { captureId }: EventPayload = event;
   // find capture by key
-  const capture = await URICapture.findOneBy({
+  const capture = await Capture.findOneBy({
     id: captureId,
   });
 

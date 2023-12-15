@@ -1,7 +1,7 @@
 import { ApiHandler } from "sst/node/api";
 import { Config } from "sst/node/config";
 import { connectDB } from "../data-source";
-import { URICapture } from "@website-capture/core/entity/URICapture";
+import { Capture } from "@website-capture/core/entity/Capture";
 import { getUserFromEvent } from "@website-capture/core/utils";
 
 export const handler = ApiHandler(async (_evt) => {
@@ -18,7 +18,7 @@ export const handler = ApiHandler(async (_evt) => {
     };
   }
 
-  const uriCaptures = await URICapture.find({
+  const uriCaptures = await Capture.find({
     where: { ownerId: user.id },
   });
 

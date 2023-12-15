@@ -5,7 +5,7 @@ import { Queue } from "sst/node/queue";
 import * as yup from "yup";
 
 import { connectDB } from "../data-source";
-import { URICapture } from "@website-capture/core/entity/URICapture";
+import { Capture } from "@website-capture/core/entity/Capture";
 import { getUserFromEvent } from "@website-capture/core/utils";
 
 const bodySchema = yup.object().shape({
@@ -36,7 +36,7 @@ export const handler = ApiHandler(async (event) => {
     const { uri } = bodyParsed;
 
     // create capture
-    const capture = new URICapture();
+    const capture = new Capture();
     capture.website = uri;
     capture.width = body.width;
     capture.height = body.height;

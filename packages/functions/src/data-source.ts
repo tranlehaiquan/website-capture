@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { URICapture } from "@website-capture/core/entity/URICapture";
+import { Capture } from "@website-capture/core/entity/Capture";
+import { RecursiveCapture } from "@website-capture/core/entity/RecursiveCapture";
 import { User } from "@website-capture/core/entity/User";
 
 let connected = false;
@@ -15,7 +16,7 @@ export const connectDB = async (url: string) => {
     url,
     synchronize: true,
     logging: false,
-    entities: [URICapture, User],
+    entities: [Capture, User, RecursiveCapture],
     migrations: [],
     subscribers: [],
     ssl: true,

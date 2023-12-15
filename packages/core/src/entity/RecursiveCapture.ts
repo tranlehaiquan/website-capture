@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { BaseEntityCustom } from "./BaseEntityCustom";
 import { Format } from "../constants";
+import { User } from "./User";
 
 @Entity()
 export class RecursiveCapture extends BaseEntityCustom {
@@ -23,4 +24,24 @@ export class RecursiveCapture extends BaseEntityCustom {
     default: Format.jpeg,
   })
   format: Format;
+
+  // schedule
+  @Column({ type: "varchar", length: 255 })
+  schedule: string;
+
+  // scheduleOptions
+  @Column({ type: "json" })
+  scheduleOptions: any;
+
+  // owner
+  @ManyToOne(() => User, (user) => user.recursiveCaptures)
+  @JoinColumn({ name: "ownerId" }) // this is the column that will hold the foreign key
+  owner: User;
+
+  @Column({ type: "varchar" })
+  ownerId: string;
+
+  // end time
+  @Column({ type: "timestamp", nullable: true })
+  endTime: Date;
 }
