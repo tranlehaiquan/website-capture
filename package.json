@@ -19,8 +19,7 @@
     "constructs": "10.3.0",
     "fs-extra": "^11.2.0",
     "sst": "2.38.7",
-    "typescript": "^5.2.2",
-    "unzipper": "^0.10.14"
+    "typescript": "^5.2.2"
   },
   "workspaces": [
     "packages/*"
@@ -30,10 +29,11 @@
     "@aws-sdk/client-scheduler": "^3.454.0",
     "@aws-sdk/client-sqs": "^3.438.0",
     "@aws-sdk/s3-request-presigner": "^3.438.0",
-    "@sparticuz/chromium": "113.0.1",
+    "@sparticuz/chromium": "119.0.0",
+    "adm-zip": "^0.5.10",
     "http-errors": "^2.0.0",
     "pg": "^8.11.3",
-    "puppeteer-core": "21.4.1",
+    "puppeteer-core": "21.6.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.17"
   }

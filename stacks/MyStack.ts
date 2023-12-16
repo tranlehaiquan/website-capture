@@ -104,14 +104,7 @@ export function API({ stack, app }: StackContext) {
     defaults: {
       function: {
         bind: [bucket, queue, POSTGRES_URL],
-        nodejs: {
-          esbuild: {
-            external: ["@sparticuz/chromium"],
-          },
-        },
-        layers: [layerChromium],
         runtime: "nodejs18.x",
-        timeout: 120,
         memorySize: 1024 * 2,
       },
       authorizer: "jwt",

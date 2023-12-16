@@ -12,19 +12,17 @@ import {
 import { Bucket } from "sst/node/bucket";
 import getWorker from "@website-capture/core/puppeteerWorker";
 import { Status } from "@website-capture/core/constants";
+import middy from "@middy/core";
+import { connectDatabase } from "@website-capture/core/middlewares";
 
 const s3Client = new S3Client({});
 const schedulerClient = new SchedulerClient({});
 
-export const handler = async (_evt: SQSEvent) => {
+const consumerHandler = async (_evt: SQSEvent) => {
   const records = _evt.Records;
   const failedIDs: { itemIdentifier: string }[] = [];
 
   const browser = await getWorker();
-
-  // connect db
-  const POSTGRES_URL = Config.POSTGRES_URL;
-  await connectDB(POSTGRES_URL);
 
   await Promise.all(
     records.map(async (record) => {
@@ -101,7 +99,7 @@ export const handler = async (_evt: SQSEvent) => {
               Mode: "OFF",
               MaximumWindowInMinutes: undefined,
             },
-            ActionAfterCompletion: 'DELETE'
+            ActionAfterCompletion: "DELETE",
           };
 
           const commandScheduler = new CreateScheduleCommand(inputScheduler);
@@ -128,3 +126,7 @@ export const handler = async (_evt: SQSEvent) => {
     batchItemFailures: failedIDs,
   };
 };
+
+export const handler = middy(consumerHandler).use([
+  connectDatabase(Config.POSTGRES_URL),
+]);

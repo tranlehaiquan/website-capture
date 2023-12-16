@@ -1,9 +1,9 @@
 import fs from "fs-extra";
-import unzipper from "unzipper";
 import { pipeline } from "node:stream/promises";
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import AdmZip from "adm-zip";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,13 +16,20 @@ const chromiumLayerLink =
   "https://github.com/Sparticuz/chromium/releases/download/v119.0.0/chromium-v119.0.0-layer.zip";
 
 const downloadLayer = async () => {
-  // const file = `${PATH_LAYERS}/chromium-v119.0.0-layer.zip`;
+  const file = `${PATH_LAYERS}/chromium-v119.0.0-layer.zip`;
   const response = await fetch(chromiumLayerLink);
   if (!response.ok) {
     throw new Error(`Unexpected response ${response.statusText}`);
   }
 
-  await pipeline(response.body, unzipper.Extract({ path: PATH_LAYERS }));
+  await pipeline(response.body, fs.createWriteStream(file));
+
+  // unzip layers/chromium/chromium-v119.0.0-layer.zip to layers/chromium
+  const zip = new AdmZip(file);
+  zip.extractAllTo(PATH_LAYERS, /*overwrite*/ true);
+
+  // delete file
+  fs.removeSync(file);
 };
 
 await downloadLayer();
