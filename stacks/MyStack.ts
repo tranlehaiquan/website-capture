@@ -120,7 +120,7 @@ export function API({ stack, app }: StackContext) {
       "POST /capture": "packages/functions/src/capture/post.handler",
       "GET /capture": "packages/functions/src/capture/getAll.handler",
       "GET /capture/{id}": "packages/functions/src/capture/get.handler",
-      "POST /test": "packages/functions/src/test.handler",
+      "POST /test/{id}": "packages/functions/src/test.handler",
       "POST /recurring-capture": "packages/functions/src/recurringCapture/post.handler",
       "GET /recurring-capture/{id}": "packages/functions/src/recurringCapture/get.handler",
       "PUT /recurring-capture/{id}": "packages/functions/src/recurringCapture/put.handler",

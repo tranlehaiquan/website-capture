@@ -1,39 +1,36 @@
-import { ApiHandler } from "sst/node/api";
 import { Config } from "sst/node/config";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { Queue } from "sst/node/queue";
 import * as yup from "yup";
 
-import { connectDB } from "../data-source";
 import { Capture } from "@website-capture/core/entity/Capture";
 import { getUserFromEvent } from "@website-capture/core/utils";
+import middy from "@middy/core";
+import {
+  baseMiddlewares,
+  connectDatabase,
+  validator,
+} from "@website-capture/core/middlewares";
+import createHttpError from "http-errors";
 
 const bodySchema = yup.object().shape({
-  uri: yup.string().required(),
-  height: yup.number().required(),
-  width: yup.number().required(),
-  format: yup.mixed().oneOf(["jpg", "png", "webp"]).default("jpg"),
+  body: yup.object().shape({
+    uri: yup.string().required(),
+    height: yup.number().required(),
+    width: yup.number().required(),
+    format: yup.mixed().oneOf(["jpg", "png", "webp"]).default("jpg"),
+  }),
 });
 
 const sqsClient = new SQSClient({});
 
-/**
- * New Capture with input bodySchema
- * This handle will be called when you make a POST request to /capture
- *
- */
-export const handler = ApiHandler(async (event) => {
-  await connectDB(Config.POSTGRES_URL);
+const postHandler = async (event: any) => {
   const user = await getUserFromEvent(event);
 
-  // get body from event
-  const bodyParsed = JSON.parse(event.body || "{}");
-
-  // validate body
   try {
-    const body = await bodySchema.validate(bodyParsed);
-
-    const { uri } = bodyParsed;
+    // get type of bodySchema
+    const { body } = bodySchema.cast(event);
+    const { uri } = body;
 
     // create capture
     const capture = new Capture();
@@ -58,23 +55,19 @@ export const handler = ApiHandler(async (event) => {
     await sqsClient.send(command);
 
     return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: capture.id,
-      }),
+      id: capture.id,
     };
-  } catch (err) {
-    return {
-      statusCode: 400,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: err.message,
-      }),
-    };
+  } catch (err: any) {
+    throw new createHttpError.BadRequest(
+      err?.message || "Something went wrong"
+    );
   }
-});
+};
+
+export const handler = middy(postHandler).use([
+  ...baseMiddlewares,
+  validator({
+    schema: bodySchema,
+  }),
+  connectDatabase(Config.POSTGRES_URL),
+]);

@@ -1,21 +1,21 @@
-import { ApiHandler } from "sst/node/api";
 import { Config } from "sst/node/config";
-import { connectDB } from "../data-source";
 import { Capture } from "@website-capture/core/entity/Capture";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Bucket } from "sst/node/bucket";
+import middy from "@middy/core";
+import {
+  baseMiddlewares,
+  connectDatabase,
+} from "@website-capture/core/middlewares";
+import createError from 'http-errors';
 
 const s3Client = new S3Client({});
 
-export const handler = ApiHandler(async (_evt) => {
-  // get id from path /capture/{id}
-  const id = _evt.pathParameters?.id;
+const POSTGRES_URL = Config.POSTGRES_URL;
 
-  // get config
-  const POSTGRES_URL = Config.POSTGRES_URL;
-  // connect db
-  await connectDB(POSTGRES_URL);
+const getHandler = async (_evt: any) => {
+  const id = _evt.pathParameters?.id;
 
   // get url params
   const params = _evt.queryStringParameters || {};
@@ -23,28 +23,12 @@ export const handler = ApiHandler(async (_evt) => {
   const preSigned = params.preSigned || false;
 
   if (!captureId) {
-    return {
-      statusCode: 400,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: "Cant not found!",
-      }),
-    };
+    throw new createError.BadRequest('Missing id');
   }
 
   const uriCapture = await Capture.findOneBy({ id: captureId });
   if (!uriCapture) {
-    return {
-      statusCode: 400,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: "Cant not found!",
-      }),
-    };
+    throw new createError.NotFound('Capture not found');
   }
 
   // generate presigned url
@@ -58,22 +42,15 @@ export const handler = ApiHandler(async (_evt) => {
     );
 
     return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...uriCapture,
-        preSignedUrl: url,
-      }),
+      ...uriCapture,
+      preSignedUrl: url,
     };
   }
 
-  return {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(uriCapture),
-  };
-});
+  return uriCapture;
+};
+
+export const handler = middy(getHandler).use([
+  ...baseMiddlewares,
+  connectDatabase(POSTGRES_URL),
+]);
