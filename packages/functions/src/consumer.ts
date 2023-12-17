@@ -1,5 +1,4 @@
 import { SQSEvent } from "aws-lambda";
-import { connectDB } from "./data-source";
 import { Config } from "sst/node/config";
 import { Capture } from "@website-capture/core/entity/Capture";
 

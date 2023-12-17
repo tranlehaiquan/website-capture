@@ -1,13 +1,9 @@
 import { User } from "@website-capture/core/entity/User";
-import { connectDB } from "../data-source";
 import { Config } from "sst/node/config";
+import middy from "@middy/core";
+import { connectDatabase } from "@website-capture/core/middlewares";
 
-export const handler = async (event: any) => {
-  // get config
-  const POSTGRES_URL = Config.POSTGRES_URL;
-  // connect db
-  await connectDB(POSTGRES_URL);
-  
+const postHandler = async (event: any) => {
   const user = new User();
   user.username = event.request.userAttributes.email;
   user.cognitoId = event.userName;
@@ -16,3 +12,7 @@ export const handler = async (event: any) => {
 
   return event;
 };
+
+export const handler = middy(postHandler).use([
+  connectDatabase(Config.POSTGRES_URL),
+]);
