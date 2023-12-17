@@ -6,7 +6,6 @@ import {
 } from "@website-capture/core/middlewares";
 import { getUserFromEvent } from "@website-capture/core/utils";
 import createHttpError from "http-errors";
-import { connectDB } from "src/data-source";
 import { Config } from "sst/node/config";
 
 /**
@@ -20,8 +19,6 @@ const getHandler = async (event: any) => {
   if (!id) {
     throw new createHttpError.BadRequest("Missing id");
   }
-
-  await connectDB(Config.POSTGRES_URL);
   const user = await getUserFromEvent(event);
 
   if (!user) {

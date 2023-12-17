@@ -1,12 +1,23 @@
 import { Config } from "sst/node/config";
 import * as yup from "yup";
+import {
+  SchedulerClient,
+  CreateScheduleCommand,
+  type CreateScheduleCommandInput,
+} from "@aws-sdk/client-scheduler";
 
 import { RecursiveCapture } from "@website-capture/core/entity/RecursiveCapture";
 import { getUserFromEvent } from "@website-capture/core/utils";
-import { dayOfMonth, dayOfWeek, hours, minutes } from "src/schemaValidation";
+import {
+  dayOfMonth,
+  dayOfWeek,
+  hours,
+  minutes,
+} from "@website-capture/core/schemaValidation";
 import {
   SUPPORT_IMAGE_FORMATS,
   SUPPORT_SCHEDULE,
+  Schedule,
 } from "@website-capture/core/constants";
 import middy from "@middy/core";
 import {
@@ -14,6 +25,8 @@ import {
   connectDatabase,
   validator,
 } from "@website-capture/core/middlewares";
+
+const schedulerClient = new SchedulerClient({});
 
 // Minutes: 0-59
 // Hours: 0-23
@@ -23,7 +36,6 @@ import {
 // Daily -> Minutes, Hours
 // Weekly -> Minutes, Hours, Day of week
 // Monthly -> Minutes, Hours, Day of Month
-
 const bodySchema = yup.object().shape({
   body: yup.object().shape({
     uri: yup.string().required(),
@@ -34,7 +46,7 @@ const bodySchema = yup.object().shape({
     scheduleOptions: yup
       .object()
       .when("schedule", {
-        is: (schedule: string) => schedule === "daily",
+        is: (schedule: string) => schedule === Schedule.daily,
         then: (schema) =>
           schema.shape({
             minutes: minutes.required(),
@@ -43,7 +55,7 @@ const bodySchema = yup.object().shape({
         otherwise: (schema) => schema.optional(),
       })
       .when("schedule", {
-        is: (schedule: string) => schedule === "weekly",
+        is: (schedule: string) => schedule === Schedule.weekly,
         then: (schema) =>
           schema.shape({
             minutes: minutes.required(),
@@ -53,7 +65,7 @@ const bodySchema = yup.object().shape({
         otherwise: (schema) => schema.optional(),
       })
       .when("schedule", {
-        is: (schedule: string) => schedule === "monthly",
+        is: (schedule: string) => schedule === Schedule.monthly,
         then: (schema) =>
           schema.shape({
             minutes: minutes.required(),
@@ -89,6 +101,90 @@ const postHandler = async (event: any) => {
     recursiveCapture.owner = user;
   }
   await recursiveCapture.save();
+
+  let createScheduleCommand: CreateScheduleCommandInput | undefined;
+  if (schedule === Schedule.daily) {
+    const { minutes, hours } = scheduleOptions as {
+      minutes: number;
+      hours: number;
+    };
+
+    createScheduleCommand = {
+      Name: `Recurring capture ${recursiveCapture.id}`,
+      ScheduleExpression: `cron(${minutes} ${hours} * * ? *)`,
+      Target: {
+        // Target
+        Arn: process.env.TARGET_ARN, // required
+        RoleArn: process.env.TARGET_ROLE_ARN,
+        RetryPolicy: {
+          MaximumRetryAttempts: 3,
+        },
+        Input: JSON.stringify(recursiveCapture),
+      },
+      FlexibleTimeWindow: {
+        Mode: "OFF",
+        MaximumWindowInMinutes: undefined,
+      },
+    };
+  }
+
+  if (schedule === Schedule.weekly) {
+    const { minutes, hours, daysOfWeek } = scheduleOptions as {
+      minutes: number;
+      hours: number;
+      daysOfWeek: number;
+    };
+
+    createScheduleCommand = {
+      Name: `Recurring capture ${recursiveCapture.id}`,
+      ScheduleExpression: `cron(${minutes} ${hours} ? * ${daysOfWeek} *)`,
+      Target: {
+        // Target
+        Arn: process.env.TARGET_ARN, // required
+        RoleArn: process.env.TARGET_ROLE_ARN,
+        RetryPolicy: {
+          MaximumRetryAttempts: 3,
+        },
+        Input: JSON.stringify(recursiveCapture),
+      },
+      FlexibleTimeWindow: {
+        Mode: "OFF",
+        MaximumWindowInMinutes: undefined,
+      },
+    };
+  }
+
+  if (schedule === Schedule.monthly) {
+    const { minutes, hours, dayOfMonth } = scheduleOptions as {
+      minutes: number;
+      hours: number;
+      dayOfMonth: number;
+    };
+
+    createScheduleCommand = {
+      Name: `Recurring capture ${recursiveCapture.id}`,
+      ScheduleExpression: `cron(${minutes} ${hours} ${dayOfMonth} * ? *)`,
+      Target: {
+        // Target
+        Arn: process.env.TARGET_ARN, // required
+        RoleArn: process.env.TARGET_ROLE_ARN,
+        RetryPolicy: {
+          MaximumRetryAttempts: 3,
+        },
+        Input: JSON.stringify(recursiveCapture),
+      },
+      FlexibleTimeWindow: {
+        Mode: "OFF",
+        MaximumWindowInMinutes: undefined,
+      },
+    };
+  }
+
+  if (createScheduleCommand) {
+    const command = new CreateScheduleCommand(createScheduleCommand);
+    await schedulerClient.send(command);
+  }
+
   return recursiveCapture;
 };
 
