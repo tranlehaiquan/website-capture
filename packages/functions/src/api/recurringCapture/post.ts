@@ -125,7 +125,9 @@ const postHandler = async (event: any) => {
         RetryPolicy: {
           MaximumRetryAttempts: 3,
         },
-        Input: JSON.stringify(recursiveCapture),
+        Input: JSON.stringify({
+          recursiveCaptureId: recursiveCapture.id,
+        }),
       },
       FlexibleTimeWindow: {
         Mode: "OFF",

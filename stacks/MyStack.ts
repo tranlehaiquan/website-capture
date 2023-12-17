@@ -53,18 +53,13 @@ export function API({ stack, app }: StackContext) {
     stack,
     "CaptureCfnScheduleGroup",
     {
-      name: "CaptureCfnScheduleGroup",
+      name: `CaptureCfnScheduleGroup-${stack.stage}`,
     }
   );
 
   // new function for EventBridge scheduler
   const imageCleaner = new Function(stack, "imageCollector", {
     handler: "packages/functions/src/triggers/imageCleaner.handler",
-    bind: [POSTGRES_URL, bucket],
-  });
-
-  const recurringCapture = new Function(stack, "recurringCapture", {
-    handler: "packages/functions/src/triggers/recurringHandler.handler",
     bind: [POSTGRES_URL, bucket],
   });
 
@@ -107,6 +102,12 @@ export function API({ stack, app }: StackContext) {
     },
   });
 
+  // function to handle recurring capture
+  const recurringCapture = new Function(stack, "recurringCapture", {
+    handler: "packages/functions/src/triggers/recurringHandler.handler",
+    bind: [POSTGRES_URL, bucket, queue],
+  });
+
   const api = new Api(stack, "api", {
     authorizers: {
       jwt: {
@@ -131,16 +132,16 @@ export function API({ stack, app }: StackContext) {
       authorizer: "jwt",
     },
     routes: {
-      "POST /capture": "packages/functions/src/capture/post.handler",
-      "GET /capture": "packages/functions/src/capture/getAll.handler",
-      "GET /capture/{id}": "packages/functions/src/capture/get.handler",
-      "POST /test/{id}": "packages/functions/src/test.handler",
+      "POST /capture": "packages/functions/src/api/capture/post.handler",
+      "GET /capture": "packages/functions/src/api/capture/getAll.handler",
+      "GET /capture/{id}": "packages/functions/src/api/capture/get.handler",
       "POST /recurring-capture":
-        "packages/functions/src/recurringCapture/post.handler",
+        "packages/functions/src/api/recurringCapture/post.handler",
       "GET /recurring-capture/{id}":
-        "packages/functions/src/recurringCapture/get.handler",
+        "packages/functions/src/api/recurringCapture/get.handler",
       "PUT /recurring-capture/{id}":
-        "packages/functions/src/recurringCapture/put.handler",
+        "packages/functions/src/api/recurringCapture/put.handler",
+      "POST /test/{id}": "packages/functions/src/test.handler",
     },
   });
 

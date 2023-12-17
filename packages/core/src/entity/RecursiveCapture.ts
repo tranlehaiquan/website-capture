@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { BaseEntityCustom } from "./BaseEntityCustom";
 import { Format } from "../constants";
 import { User } from "./User";
+import { Capture } from "./Capture";
 
 @Entity()
 export class RecursiveCapture extends BaseEntityCustom {
@@ -48,4 +49,8 @@ export class RecursiveCapture extends BaseEntityCustom {
   // ScheduleArn
   @Column({ type: "varchar", nullable: true })
   scheduleArn: string;
+
+  // captures OneToMany one recursive capture can have many captures
+  @OneToMany(() => Capture, (capture) => capture.recursiveCapture)
+  captures: Capture[];
 }

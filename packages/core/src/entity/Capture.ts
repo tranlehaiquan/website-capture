@@ -8,6 +8,7 @@ import {
 import { BaseEntityCustom } from "./BaseEntityCustom";
 import { Format, Status } from "../constants";
 import { User } from "./User";
+import { RecursiveCapture } from "./RecursiveCapture";
 
 @Entity()
 export class Capture extends BaseEntityCustom {
@@ -54,4 +55,12 @@ export class Capture extends BaseEntityCustom {
 
   @Column({ type: "varchar", nullable: true })
   ownerId?: string;
+
+  // recursive capture ManyToOne
+  @ManyToOne(() => RecursiveCapture, (recursiveCapture) => recursiveCapture.captures, { nullable: true })
+  @JoinColumn({ name: "recursiveCaptureId" }) // this is the column that will hold the foreign key
+  recursiveCapture?: RecursiveCapture;
+
+  @Column({ type: "varchar", nullable: true })
+  recursiveCaptureId: string;
 }
