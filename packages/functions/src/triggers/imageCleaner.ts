@@ -1,10 +1,11 @@
 import { Status } from "@website-capture/core/constants";
-import { connectDB } from "src/data-source";
 import { Capture } from "@website-capture/core/entity/Capture";
 import { ApiHandler } from "sst/node/api";
 import { Config } from "sst/node/config";
-import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
+import middy from "@middy/core";
+import { connectDatabase } from "@website-capture/core/middlewares";
 
 type EventPayload = {
   captureId: string;
@@ -13,12 +14,7 @@ type EventPayload = {
 const s3Client = new S3Client({});
 
 // handler
-export const handler = ApiHandler(async (event: any) => {
-  // TODO: handle delete image here
-  const POSTGRES_URL = Config.POSTGRES_URL;
-  // connect db
-  await connectDB(POSTGRES_URL);
-
+const imageCleanerHandler = ApiHandler(async (event: any) => {
   const { captureId }: EventPayload = event;
   // find capture by key
   const capture = await Capture.findOneBy({
@@ -42,3 +38,7 @@ export const handler = ApiHandler(async (event: any) => {
 
   return event;
 });
+
+export const handler = middy(imageCleanerHandler).use([
+  connectDatabase(Config.POSTGRES_URL),
+]);
