@@ -9,6 +9,7 @@ import {
   Function,
 } from "sst/constructs";
 import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { CfnScheduleGroup } from "aws-cdk-lib/aws-scheduler";
 
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Duration } from "aws-cdk-lib";
@@ -47,9 +48,23 @@ export function API({ stack, app }: StackContext) {
     ],
   });
 
+  // group for scheduler
+  const cfnScheduleGroup = new CfnScheduleGroup(
+    stack,
+    "CaptureCfnScheduleGroup",
+    {
+      name: "CaptureCfnScheduleGroup",
+    }
+  );
+
   // new function for EventBridge scheduler
   const imageCleaner = new Function(stack, "imageCollector", {
     handler: "packages/functions/src/triggers/imageCleaner.handler",
+    bind: [POSTGRES_URL, bucket],
+  });
+
+  const recurringCapture = new Function(stack, "recurringCapture", {
+    handler: "packages/functions/src/triggers/recurringHandler.handler",
     bind: [POSTGRES_URL, bucket],
   });
 
@@ -70,6 +85,7 @@ export function API({ stack, app }: StackContext) {
         environment: {
           TARGET_ARN: imageCleaner.functionArn,
           TARGET_ROLE_ARN: roleExecuteFunction.roleArn,
+          GROUP_NAME: cfnScheduleGroup.name || "CaptureCfnScheduleGroup",
         },
         permissions: ["scheduler:CreateSchedule", "iam:PassRole"],
       },
@@ -106,6 +122,11 @@ export function API({ stack, app }: StackContext) {
         bind: [bucket, queue, POSTGRES_URL],
         runtime: "nodejs18.x",
         memorySize: 1024 * 2,
+        environment: {
+          TARGET_ARN: recurringCapture.functionArn,
+          TARGET_ROLE_ARN: roleExecuteFunction.roleArn,
+        },
+        permissions: ["scheduler:CreateSchedule", "iam:PassRole"],
       },
       authorizer: "jwt",
     },
@@ -114,9 +135,12 @@ export function API({ stack, app }: StackContext) {
       "GET /capture": "packages/functions/src/capture/getAll.handler",
       "GET /capture/{id}": "packages/functions/src/capture/get.handler",
       "POST /test/{id}": "packages/functions/src/test.handler",
-      "POST /recurring-capture": "packages/functions/src/recurringCapture/post.handler",
-      "GET /recurring-capture/{id}": "packages/functions/src/recurringCapture/get.handler",
-      "PUT /recurring-capture/{id}": "packages/functions/src/recurringCapture/put.handler",
+      "POST /recurring-capture":
+        "packages/functions/src/recurringCapture/post.handler",
+      "GET /recurring-capture/{id}":
+        "packages/functions/src/recurringCapture/get.handler",
+      "PUT /recurring-capture/{id}":
+        "packages/functions/src/recurringCapture/put.handler",
     },
   });
 
@@ -142,6 +166,7 @@ export function API({ stack, app }: StackContext) {
     UserPoolClientId: auth.userPoolClientId,
     imageCleanerArn: imageCleaner.functionArn,
     imageCleanerArnRoleArn: roleExecuteFunction.roleArn,
+    scheduleGroup: cfnScheduleGroup.name,
   });
 
   return {

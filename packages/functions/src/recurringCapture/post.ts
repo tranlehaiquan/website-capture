@@ -103,6 +103,11 @@ const postHandler = async (event: any) => {
   await recursiveCapture.save();
 
   let createScheduleCommand: CreateScheduleCommandInput | undefined;
+  let name = `Recurring capture ${recursiveCapture.id}`;
+  // replace character not [0-9a-zA-Z-_.] with -
+  name = name.replaceAll(/[^0-9a-zA-Z-_.]/g, "-");
+  const GroupName = process.env.GROUP_NAME;
+
   if (schedule === Schedule.daily) {
     const { minutes, hours } = scheduleOptions as {
       minutes: number;
@@ -110,8 +115,9 @@ const postHandler = async (event: any) => {
     };
 
     createScheduleCommand = {
-      Name: `Recurring capture ${recursiveCapture.id}`,
+      Name: name,
       ScheduleExpression: `cron(${minutes} ${hours} * * ? *)`,
+      Description: `RecurringId: ${recursiveCapture.id}`,
       Target: {
         // Target
         Arn: process.env.TARGET_ARN, // required
@@ -136,7 +142,7 @@ const postHandler = async (event: any) => {
     };
 
     createScheduleCommand = {
-      Name: `Recurring capture ${recursiveCapture.id}`,
+      Name: name,
       ScheduleExpression: `cron(${minutes} ${hours} ? * ${daysOfWeek} *)`,
       Target: {
         // Target
@@ -162,7 +168,7 @@ const postHandler = async (event: any) => {
     };
 
     createScheduleCommand = {
-      Name: `Recurring capture ${recursiveCapture.id}`,
+      Name: name,
       ScheduleExpression: `cron(${minutes} ${hours} ${dayOfMonth} * ? *)`,
       Target: {
         // Target
@@ -181,8 +187,14 @@ const postHandler = async (event: any) => {
   }
 
   if (createScheduleCommand) {
-    const command = new CreateScheduleCommand(createScheduleCommand);
-    await schedulerClient.send(command);
+    const command = new CreateScheduleCommand({
+      ...createScheduleCommand,
+      GroupName,
+    });
+    const schedulerInstance = await schedulerClient.send(command);
+
+    recursiveCapture.scheduleArn = schedulerInstance.ScheduleArn as string;
+    await recursiveCapture.save()
   }
 
   return recursiveCapture;

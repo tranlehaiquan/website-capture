@@ -44,4 +44,8 @@ export class RecursiveCapture extends BaseEntityCustom {
   // end time
   @Column({ type: "timestamp", nullable: true })
   endTime: Date;
+
+  // ScheduleArn
+  @Column({ type: "varchar", nullable: true })
+  scheduleArn: string;
 }
