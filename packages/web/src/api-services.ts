@@ -46,6 +46,19 @@ export const createCapture = async (data: CreateCaptureData): Promise<any> => {
   return body.json();
 };
 
+export const createCaptureRecurring = async (data: CreateCaptureData): Promise<any> => {
+  const restOperation = post({
+    apiName: "capture",
+    path: "/recurring-capture",
+    options: {
+      body: data,
+    },
+  });
+
+  const { body } = await restOperation.response;
+  return body.json();
+};
+
 export const getCaptureList = async (): Promise<Capture[]> => {
   const { body } = await get({
     apiName: "capture",

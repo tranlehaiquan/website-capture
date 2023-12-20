@@ -1,9 +1,26 @@
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import Layout from "../components/Layout";
-import CaptureInput from "../components/CaptureInput";
-import { createCapture } from "../api-services";
+import CaptureInput, { CaptureInputValues } from "../components/CaptureInput";
+import { createCapture, createCaptureRecurring } from "../api-services";
 import Spinner from "../components/Spinner";
+import { CAPTURE_TYPES, Schedule } from "shared";
+import pick from "lodash/pick";
+
+type Payload = {
+  width: number;
+  height: number;
+  format: string;
+  uri: string;
+  schedule?: any;
+  scheduleEndTime?: Date;
+  scheduleOptions?: {
+    minutes?: number;
+    hours?: number;
+    dayOfWeek?: number;
+    dayOfMonth?: number;
+  };
+};
 
 export default function Home() {
   const navigate = useNavigate();
@@ -17,8 +34,47 @@ export default function Home() {
     },
   });
 
-  const handleSubmit = async (data: any) => {
-    await mutation.mutateAsync(data);
+  // mutations recurring
+  const mutationRecurring = useMutation({
+    mutationFn: createCaptureRecurring,
+    onSuccess: (data) => {
+      if (data?.id) {
+        navigate(`/capture/${data.id}`);
+      }
+    },
+  });
+
+  const handleSubmit = async (data: CaptureInputValues) => {
+    if (data.captureType === CAPTURE_TYPES["One Time"]) {
+      await mutation.mutateAsync(data);
+      return;
+    }
+
+    if (data.captureType === CAPTURE_TYPES.Recurring) {
+      const payload: Payload = pick(data, [
+        "width",
+        "height",
+        "format",
+        "uri",
+        "schedule",
+        "scheduleEndTime"
+      ]);
+
+      payload.scheduleOptions = {
+        minutes: data.minutes,
+        hours: data.hours,
+      }
+
+      if (data.schedule === Schedule.weekly) {
+        payload.scheduleOptions.dayOfWeek = data.dayOfWeek;
+      }
+
+      if (data.schedule === Schedule.monthly) {
+        payload.scheduleOptions.dayOfMonth = data.dayOfMonth;
+      }
+      await mutationRecurring.mutateAsync(payload);
+      return;
+    }
   };
 
   return (

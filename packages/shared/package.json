@@ -4,9 +4,12 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rm -rf dist && tsc && echo done building"
+    "build": "rm -rf dist && tsc"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "yup": "^1.3.2"
+  }
 }

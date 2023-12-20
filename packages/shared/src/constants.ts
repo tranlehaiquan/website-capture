@@ -22,3 +22,8 @@ export enum Schedule {
 }
 
 export const SUPPORT_SCHEDULE = Object.values(Schedule);
+
+export enum CAPTURE_TYPES {
+  "One Time" = "one-time",
+  "Recurring" = "recurring",
+}
