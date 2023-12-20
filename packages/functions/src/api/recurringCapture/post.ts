@@ -18,7 +18,7 @@ import {
   SUPPORT_IMAGE_FORMATS,
   SUPPORT_SCHEDULE,
   Schedule,
-} from "@website-capture/core/constants";
+} from "shared";
 import middy from "@middy/core";
 import {
   baseMiddlewares,

@@ -1,4 +1,4 @@
-import { Status } from "@website-capture/core/constants";
+import { Status } from "shared";
 import { Capture } from "@website-capture/core/entity/Capture";
 import { Config } from "sst/node/config";
 import middy from "@middy/core";

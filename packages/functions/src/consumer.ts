@@ -10,7 +10,7 @@ import {
 } from "@aws-sdk/client-scheduler"; // ES Modules import
 import { Bucket } from "sst/node/bucket";
 import getWorker from "@website-capture/core/puppeteerWorker";
-import { Status } from "@website-capture/core/constants";
+import { Status } from "shared";
 import middy from "@middy/core";
 import { connectDatabase } from "@website-capture/core/middlewares";
 

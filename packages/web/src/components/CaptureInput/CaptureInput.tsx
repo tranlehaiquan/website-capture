@@ -3,6 +3,7 @@ import clsx from "clsx";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Format } from "shared";
 
 interface Props {
   className?: string;
@@ -23,7 +24,7 @@ const CaptureInput: React.FC<Props> = ({ className, onSubmit, disabled }) => {
     defaultValues: {
       width: 1280,
       height: 1024,
-      format: "jpg",
+      format: Format.jpeg,
     },
     disabled,
   });
@@ -84,9 +85,11 @@ const CaptureInput: React.FC<Props> = ({ className, onSubmit, disabled }) => {
             className="select select-bordered w-full max-w-xs"
             {...form.register("format")}
           >
-            <option value="jpg">jpg</option>
-            <option value="png">png</option>
-            <option value="webp">webp</option>
+            {Object.keys(Format).map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
           </select>
         </div>
       </div>

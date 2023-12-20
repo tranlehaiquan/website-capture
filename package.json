@@ -9,7 +9,8 @@
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:packages": "pnpm run -r build"
   },
   "devDependencies": {
     "@puppeteer/browsers": "^1.8.0",

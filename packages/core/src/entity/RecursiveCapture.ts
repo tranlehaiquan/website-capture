@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { BaseEntityCustom } from "./BaseEntityCustom";
-import { Format } from "../constants";
+import { Format } from "shared";
 import { User } from "./User";
 import { Capture } from "./Capture";
 

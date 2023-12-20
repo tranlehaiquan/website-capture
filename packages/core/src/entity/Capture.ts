@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { BaseEntityCustom } from "./BaseEntityCustom";
-import { Format, Status } from "../constants";
+import { Format, Status } from "shared";
 import { User } from "./User";
 import { RecursiveCapture } from "./RecursiveCapture";
 
