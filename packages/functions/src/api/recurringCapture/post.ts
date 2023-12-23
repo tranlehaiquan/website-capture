@@ -17,6 +17,7 @@ import {
 import {
   SUPPORT_IMAGE_FORMATS,
   SUPPORT_SCHEDULE,
+  Format,
   Schedule,
 } from "shared";
 import middy from "@middy/core";
@@ -41,7 +42,7 @@ const bodySchema = yup.object().shape({
     uri: yup.string().required(),
     height: yup.number().required(),
     width: yup.number().required(),
-    format: yup.mixed().oneOf(SUPPORT_IMAGE_FORMATS).default("jpg"),
+    format: yup.mixed().oneOf(SUPPORT_IMAGE_FORMATS).default(Format.jpeg),
     schedule: yup.mixed().oneOf(SUPPORT_SCHEDULE).required(),
     scheduleOptions: yup
       .object()
@@ -97,6 +98,7 @@ const postHandler = async (event: any) => {
   recursiveCapture.format = body.format as any;
   recursiveCapture.schedule = schedule as string;
   recursiveCapture.scheduleOptions = scheduleOptions;
+  recursiveCapture.endTime = body.scheduleEndTime;
   if (user) {
     recursiveCapture.owner = user;
   }

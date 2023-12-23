@@ -13,7 +13,7 @@ export enum Format {
 }
 
 // format in array
-export const SUPPORT_IMAGE_FORMATS = Object.values(Format);
+export const SUPPORT_IMAGE_FORMATS = [Format.png, Format.jpeg, Format.webp];
 
 export enum Schedule {
   "daily" = "daily",
@@ -21,7 +21,7 @@ export enum Schedule {
   "monthly" = "monthly",
 }
 
-export const SUPPORT_SCHEDULE = Object.values(Schedule);
+export const SUPPORT_SCHEDULE = [Schedule.daily, Schedule.weekly, Schedule.monthly];
 
 export enum CAPTURE_TYPES {
   "One Time" = "one-time",

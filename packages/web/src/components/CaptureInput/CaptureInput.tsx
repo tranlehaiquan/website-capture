@@ -17,7 +17,11 @@ const schema = yup.object().shape({
   height: yup.number().required().positive().integer(),
   format: yup.string().required(),
   captureType: yup.string().required(),
-  schedule: yup.mixed().oneOf(SUPPORT_SCHEDULE),
+  schedule: yup.mixed().oneOf(SUPPORT_SCHEDULE).when("captureType", {
+    is: (type: string) => type === CAPTURE_TYPES.Recurring,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema.notRequired(),
+  }),
   // minutes
   minutes: yup.number().when("captureType", {
     is: (type: string) => type === CAPTURE_TYPES.Recurring,
@@ -31,7 +35,7 @@ const schema = yup.object().shape({
   }),
   dayOfMonth: yup.number(),
   dayOfWeek: yup.number(),
-  scheduleEndTime: yup.date().when("captureType", {
+  scheduleEndTime: yup.string().when("captureType", {
     is: (type: string) => type === CAPTURE_TYPES.Recurring,
     then: (schema) => schema.required(),
     otherwise: (schema) => schema.notRequired(),
@@ -52,6 +56,8 @@ const CaptureInput: React.FC<Props> = ({ className, onSubmit, disabled }) => {
     },
     disabled,
   });
+
+  console.log(form.formState.errors);
 
   return (
     <div className={clsx(className)}>

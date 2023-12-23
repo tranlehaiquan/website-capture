@@ -11,6 +11,7 @@ type Capture = {
   height: number;
   width: number;
   format: string;
+  recursiveCaptureId?: string;
 };
 
 export const getCapture = async (
@@ -66,4 +67,13 @@ export const getCaptureList = async (): Promise<Capture[]> => {
   }).response;
 
   return (await body.json()) as Capture[];
+};
+
+export const getRecurringCaptureList = async (): Promise<any[]> => {
+  const { body } = await get({
+    apiName: "capture",
+    path: "/recurring-capture",
+  }).response;
+
+  return (await body.json()) as any[];
 };

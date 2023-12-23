@@ -1,62 +1,47 @@
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { getCaptureList } from "../api-services";
-import Spinner from "../components/Spinner";
+import React, { useState } from "react";
+import clsx from "clsx";
 import Layout from "../components/Layout";
-import { Link } from "react-router-dom";
+import ListCapture from "../components/ListCapture";
+import ListRecurringCapture from "../components/ListRecurringCapture";
+import Tab from "../components/Tab";
 
 interface Props {
   className?: string;
 }
 
-const Dashboard: React.FC<Props> = () => {
-  const queryCaptureList = useQuery({
-    queryKey: ["listCapture"],
-    queryFn: () => getCaptureList(),
-  });
+type Tabs = "capture" | "recurring-capture";
 
-  if (queryCaptureList.isLoading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center">
-          <Spinner />
-        </div>
-      </Layout>
-    );
-  }
+const Dashboard: React.FC<Props> = () => {
+  // state tab
+  const [tab, setTab] = useState<Tabs>("capture");
 
   return (
     <Layout>
       <div className="container">
-        <table className="table">
-          {/* head */}
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Date</th>
-              <th>Website</th>
-              <th>Status</th>
-              <th>Width x Height</th>
-              <th>Type Image</th>
-            </tr>
-          </thead>
-          <tbody>
-            {queryCaptureList.data?.map((capture) => (
-              <tr key={capture.id}>
-                <td>
-                  <Link to={`/capture/${capture.id}`} className="text-blue-500">
-                    {capture.id}
-                  </Link>
-                </td>
-                <td>{new Date(capture.createdAt).toString()}</td>
-                <td>{capture.website}</td>
-                <td>{capture.status}</td>
-                <td>{`${capture.width} x ${capture.height}`}</td>
-                <td>{capture.format}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Tab
+          options={[
+            { label: "List Capture", value: "capture" },
+            { label: "List Recurring Capture", value: "recurring-capture" },
+          ]}
+          value={tab}
+          onChange={(v) => setTab(v as any)}
+        />
+
+        {tab === "capture" && (
+          <div className="mb-4">
+            {/* h3 list capture */}
+            <h3 className="text-2xl font-bold">List Capture</h3>
+            <ListCapture />
+          </div>
+        )}
+
+        {tab === "recurring-capture" && (
+          <div>
+            {/* h3 list recurring capture */}
+            <h3 className="text-2xl font-bold">List Recurring Capture</h3>
+            <ListRecurringCapture />
+          </div>
+        )}
       </div>
     </Layout>
   );

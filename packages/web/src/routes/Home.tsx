@@ -13,7 +13,7 @@ type Payload = {
   format: string;
   uri: string;
   schedule?: any;
-  scheduleEndTime?: Date;
+  scheduleEndTime?: string;
   scheduleOptions?: {
     minutes?: number;
     hours?: number;
@@ -39,7 +39,7 @@ export default function Home() {
     mutationFn: createCaptureRecurring,
     onSuccess: (data) => {
       if (data?.id) {
-        navigate(`/capture/${data.id}`);
+        navigate(`/recurring-capture/${data.id}`);
       }
     },
   });
