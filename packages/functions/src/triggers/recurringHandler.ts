@@ -31,7 +31,7 @@ const imageCleanerHandler = async (event: any) => {
   capture.width = recursiveCapture.width;
   capture.height = recursiveCapture.height;
   capture.format = recursiveCapture.format;
-  capture.owner = recursiveCapture.owner;
+  capture.ownerId = recursiveCapture.ownerId;
   capture.recursiveCapture = recursiveCapture;
   capture.status = Status.inProcess;
   capture.recursiveCaptureId = recursiveCapture.id;

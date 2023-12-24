@@ -12,15 +12,10 @@ import {
   validator,
 } from "@website-capture/core/middlewares";
 import createHttpError from "http-errors";
-import { SUPPORT_IMAGE_FORMATS, Format } from 'shared';
+import { validationOneTimeSchema } from 'shared';
 
 const bodySchema = yup.object().shape({
-  body: yup.object().shape({
-    uri: yup.string().required(),
-    height: yup.number().required(),
-    width: yup.number().required(),
-    format: yup.mixed().oneOf(SUPPORT_IMAGE_FORMATS).default(Format.jpeg),
-  }),
+  body: validationOneTimeSchema,
 });
 
 const sqsClient = new SQSClient({});
@@ -31,11 +26,11 @@ const postHandler = async (event: any) => {
   try {
     // get type of bodySchema
     const { body } = bodySchema.cast(event);
-    const { uri } = body;
+    const { website } = body;
 
     // create capture
     const capture = new Capture();
-    capture.website = uri;
+    capture.website = website;
     capture.width = body.width;
     capture.height = body.height;
     capture.format = body.format as any;

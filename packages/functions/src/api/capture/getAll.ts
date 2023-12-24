@@ -1,5 +1,4 @@
 import { Config } from "sst/node/config";
-import { Capture } from "@website-capture/core/entity/Capture";
 import { getUserFromEvent } from "@website-capture/core/utils";
 import middy from "@middy/core";
 import {
@@ -7,18 +6,25 @@ import {
   connectDatabase,
 } from "@website-capture/core/middlewares";
 import createHttpError from "http-errors";
+import CaptureServices from "@website-capture/core/services/captureServices";
+const captureServices = new CaptureServices();
 
+// Query
+// find by recursiveCaptureId
 const getAllHandler = async (_evt: any) => {
   const user = await getUserFromEvent(_evt);
+  const query = _evt.queryStringParameters || {};
+  const { recursiveCaptureId, status } = query;
 
-  if (!user) {
+  if (!user || !user.id) {
     createHttpError.Unauthorized("Unauthorized");
   }
 
-  const uriCaptures = await Capture.find({
-    where: { ownerId: user?.id },
+  const uriCaptures = await captureServices.findWhere({
+    ownerId: user?.id,
+    recursiveCaptureId,
+    status,
   });
-
   return uriCaptures;
 };
 

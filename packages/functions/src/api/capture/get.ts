@@ -1,5 +1,5 @@
 import { Config } from "sst/node/config";
-import { Capture } from "@website-capture/core/entity/Capture";
+import CaptureServices from "@website-capture/core/services/captureServices"
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Bucket } from "sst/node/bucket";
@@ -13,6 +13,7 @@ import createError from 'http-errors';
 const s3Client = new S3Client({});
 
 const POSTGRES_URL = Config.POSTGRES_URL;
+const captureServices = new CaptureServices();
 
 const getHandler = async (_evt: any) => {
   const id = _evt.pathParameters?.id;
@@ -26,7 +27,7 @@ const getHandler = async (_evt: any) => {
     throw new createError.BadRequest('Missing id');
   }
 
-  const uriCapture = await Capture.findOneBy({ id: captureId });
+  const uriCapture = await captureServices.getById(captureId);
   if (!uriCapture) {
     throw new createError.NotFound('Capture not found');
   }

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import Layout from "../components/Layout";
-import CaptureInput, { CaptureInputValues } from "../components/CaptureInput";
+import CaptureInput from "../components/CaptureInput";
 import { createCapture, createCaptureRecurring } from "../api-services";
 import Spinner from "../components/Spinner";
 import { CAPTURE_TYPES, Schedule } from "shared";
@@ -12,14 +12,12 @@ type Payload = {
   height: number;
   format: string;
   uri: string;
-  schedule?: any;
+  schedule?: typeof Schedule;
   scheduleEndTime?: string;
-  scheduleOptions?: {
-    minutes?: number;
-    hours?: number;
-    dayOfWeek?: number;
-    dayOfMonth?: number;
-  };
+  minutes?: number;
+  hours?: number;
+  dayOfWeek?: number;
+  dayOfMonth?: number;
 };
 
 export default function Home() {
@@ -44,7 +42,7 @@ export default function Home() {
     },
   });
 
-  const handleSubmit = async (data: CaptureInputValues) => {
+  const handleSubmit = async (data: any) => {
     if (data.captureType === CAPTURE_TYPES["One Time"]) {
       await mutation.mutateAsync(data);
       return;
@@ -55,23 +53,22 @@ export default function Home() {
         "width",
         "height",
         "format",
-        "uri",
+        "website",
         "schedule",
-        "scheduleEndTime"
-      ]);
+        "endTime"
+      ]) as any;
 
-      payload.scheduleOptions = {
-        minutes: data.minutes,
-        hours: data.hours,
-      }
+      payload.minutes = data.minutes;
+      payload.hours = data.hours;
 
       if (data.schedule === Schedule.weekly) {
-        payload.scheduleOptions.dayOfWeek = data.dayOfWeek;
+        payload.dayOfWeek = data.dayOfWeek;
       }
 
       if (data.schedule === Schedule.monthly) {
-        payload.scheduleOptions.dayOfMonth = data.dayOfMonth;
+        payload.dayOfMonth = data.dayOfMonth;
       }
+
       await mutationRecurring.mutateAsync(payload);
       return;
     }

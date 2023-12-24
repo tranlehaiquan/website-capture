@@ -47,7 +47,9 @@ export const createCapture = async (data: CreateCaptureData): Promise<any> => {
   return body.json();
 };
 
-export const createCaptureRecurring = async (data: CreateCaptureData): Promise<any> => {
+export const createCaptureRecurring = async (
+  data: CreateCaptureData
+): Promise<any> => {
   const restOperation = post({
     apiName: "capture",
     path: "/recurring-capture",
@@ -60,10 +62,12 @@ export const createCaptureRecurring = async (data: CreateCaptureData): Promise<a
   return body.json();
 };
 
-export const getCaptureList = async (): Promise<Capture[]> => {
+export const getCaptureList = async (where: any = {}): Promise<Capture[]> => {
+  const search = new URLSearchParams(where);
+
   const { body } = await get({
     apiName: "capture",
-    path: "/capture",
+    path: `/capture?${search.toString()}`,
   }).response;
 
   return (await body.json()) as Capture[];
@@ -73,6 +77,15 @@ export const getRecurringCaptureList = async (): Promise<any[]> => {
   const { body } = await get({
     apiName: "capture",
     path: "/recurring-capture",
+  }).response;
+
+  return (await body.json()) as any[];
+};
+
+export const getRecurringCaptureById = async (id: string): Promise<any> => {
+  const { body } = await get({
+    apiName: "capture",
+    path: `/recurring-capture/${id}`,
   }).response;
 
   return (await body.json()) as any[];

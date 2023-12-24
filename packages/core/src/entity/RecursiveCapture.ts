@@ -30,9 +30,21 @@ export class RecursiveCapture extends BaseEntityCustom {
   @Column({ type: "varchar", length: 255 })
   schedule: string;
 
-  // scheduleOptions
-  @Column({ type: "json" })
-  scheduleOptions: any;
+  // hours number
+  @Column({ type: "int", nullable: true })
+  hours?: number;
+
+  // minutes number
+  @Column({ type: "int", nullable: true })
+  minutes?: number;
+
+  // dayOfWeek number
+  @Column({ type: "int", nullable: true })
+  dayOfWeek?: number;
+
+  // dayOfMonth number
+  @Column({ type: "int", nullable: true })
+  dayOfMonth?: number;
 
   // owner
   @ManyToOne(() => User, (user) => user.recursiveCaptures)

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useSearchParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import ListCapture from "../components/ListCapture";
 import ListRecurringCapture from "../components/ListRecurringCapture";
@@ -11,8 +12,8 @@ interface Props {
 type Tabs = "capture" | "recurring-capture";
 
 const Dashboard: React.FC<Props> = () => {
-  // state tab
-  const [tab, setTab] = useState<Tabs>("capture");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = (searchParams.get("tab") as Tabs) || "capture";
 
   return (
     <Layout>
@@ -23,7 +24,7 @@ const Dashboard: React.FC<Props> = () => {
             { label: "List Recurring Capture", value: "recurring-capture" },
           ]}
           value={tab}
-          onChange={(v) => setTab(v as any)}
+          onChange={(v) => setSearchParams({ tab: v })}
         />
 
         {tab === "capture" && (

@@ -15,6 +15,9 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Duration } from "aws-cdk-lib";
 
 export function API({ stack, app }: StackContext) {
+  // Remove all resources when non-prod stages are removed
+  app.setDefaultRemovalPolicy("destroy");
+
   // Create User Pool
   const POSTGRES_URL = new Config.Secret(stack, "POSTGRES_URL");
 
@@ -139,7 +142,8 @@ export function API({ stack, app }: StackContext) {
       // recurring-capture
       "POST /recurring-capture":
         "packages/functions/src/api/recurringCapture/post.handler",
-      "GET /recurring-capture": "packages/functions/src/api/recurringCapture/list.handler",
+      "GET /recurring-capture":
+        "packages/functions/src/api/recurringCapture/list.handler",
       "GET /recurring-capture/{id}":
         "packages/functions/src/api/recurringCapture/get.handler",
       "PUT /recurring-capture/{id}":

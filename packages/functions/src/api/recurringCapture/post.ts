@@ -9,16 +9,8 @@ import {
 import { RecursiveCapture } from "@website-capture/core/entity/RecursiveCapture";
 import { getUserFromEvent } from "@website-capture/core/utils";
 import {
-  dayOfMonth,
-  dayOfWeek,
-  hours,
-  minutes,
-} from "@website-capture/core/schemaValidation";
-import {
-  SUPPORT_IMAGE_FORMATS,
-  SUPPORT_SCHEDULE,
-  Format,
   Schedule,
+  validationRecurringSchema,
 } from "shared";
 import middy from "@middy/core";
 import {
@@ -38,45 +30,7 @@ const schedulerClient = new SchedulerClient({});
 // Weekly -> Minutes, Hours, Day of week
 // Monthly -> Minutes, Hours, Day of Month
 const bodySchema = yup.object().shape({
-  body: yup.object().shape({
-    uri: yup.string().required(),
-    height: yup.number().required(),
-    width: yup.number().required(),
-    format: yup.mixed().oneOf(SUPPORT_IMAGE_FORMATS).default(Format.jpeg),
-    schedule: yup.mixed().oneOf(SUPPORT_SCHEDULE).required(),
-    scheduleOptions: yup
-      .object()
-      .when("schedule", {
-        is: (schedule: string) => schedule === Schedule.daily,
-        then: (schema) =>
-          schema.shape({
-            minutes: minutes.required(),
-            hours: hours.required(),
-          }),
-        otherwise: (schema) => schema.optional(),
-      })
-      .when("schedule", {
-        is: (schedule: string) => schedule === Schedule.weekly,
-        then: (schema) =>
-          schema.shape({
-            minutes: minutes.required(),
-            hours: hours.required(),
-            dayOfWeek: dayOfWeek.required(),
-          }),
-        otherwise: (schema) => schema.optional(),
-      })
-      .when("schedule", {
-        is: (schedule: string) => schedule === Schedule.monthly,
-        then: (schema) =>
-          schema.shape({
-            minutes: minutes.required(),
-            hours: hours.required(),
-            dayOfMonth: dayOfMonth.required(),
-          }),
-        otherwise: (schema) => schema.optional(),
-      }),
-    scheduleEndTime: yup.date().required(),
-  }),
+  body: validationRecurringSchema,
 });
 
 /**
@@ -87,18 +41,20 @@ const postHandler = async (event: any) => {
   const user = await getUserFromEvent(event);
   const { body } = await bodySchema.cast(event);
 
-  const { uri, schedule, scheduleOptions } = body;
+  const { website, schedule, minutes, hours, dayOfMonth, dayOfWeek } = body;
 
-  // console.log("schedule", schedule, scheduleOptions);
   // create RecursiveCapture
   const recursiveCapture = new RecursiveCapture();
-  recursiveCapture.website = uri;
+  recursiveCapture.website = website;
   recursiveCapture.width = body.width;
   recursiveCapture.height = body.height;
   recursiveCapture.format = body.format as any;
   recursiveCapture.schedule = schedule as string;
-  recursiveCapture.scheduleOptions = scheduleOptions;
-  recursiveCapture.endTime = body.scheduleEndTime;
+  recursiveCapture.minutes = minutes;
+  recursiveCapture.hours = hours;
+  recursiveCapture.dayOfMonth = dayOfMonth;
+  recursiveCapture.dayOfWeek = dayOfWeek;
+  recursiveCapture.endTime = body.endTime;
   if (user) {
     recursiveCapture.owner = user;
   }
@@ -111,11 +67,6 @@ const postHandler = async (event: any) => {
   const GroupName = process.env.GROUP_NAME;
 
   if (schedule === Schedule.daily) {
-    const { minutes, hours } = scheduleOptions as {
-      minutes: number;
-      hours: number;
-    };
-
     createScheduleCommand = {
       Name: name,
       ScheduleExpression: `cron(${minutes} ${hours} * * ? *)`,
@@ -139,15 +90,9 @@ const postHandler = async (event: any) => {
   }
 
   if (schedule === Schedule.weekly) {
-    const { minutes, hours, daysOfWeek } = scheduleOptions as {
-      minutes: number;
-      hours: number;
-      daysOfWeek: number;
-    };
-
     createScheduleCommand = {
       Name: name,
-      ScheduleExpression: `cron(${minutes} ${hours} ? * ${daysOfWeek} *)`,
+      ScheduleExpression: `cron(${minutes} ${hours} ? * ${dayOfWeek} *)`,
       Target: {
         // Target
         Arn: process.env.TARGET_ARN, // required
@@ -165,12 +110,6 @@ const postHandler = async (event: any) => {
   }
 
   if (schedule === Schedule.monthly) {
-    const { minutes, hours, dayOfMonth } = scheduleOptions as {
-      minutes: number;
-      hours: number;
-      dayOfMonth: number;
-    };
-
     createScheduleCommand = {
       Name: name,
       ScheduleExpression: `cron(${minutes} ${hours} ${dayOfMonth} * ? *)`,
