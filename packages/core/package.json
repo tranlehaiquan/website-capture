@@ -9,7 +9,7 @@
     "build": "rm -rf dist && tsc"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.119",
+    "@types/aws-lambda": "^8.10.130",
     "@types/node": "^20.3.2",
     "sst": "2.38.7",
     "vitest": "^1.0.4"
