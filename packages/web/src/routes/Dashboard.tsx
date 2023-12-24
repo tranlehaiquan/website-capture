@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import clsx from "clsx";
 import Layout from "../components/Layout";
 import ListCapture from "../components/ListCapture";
 import ListRecurringCapture from "../components/ListRecurringCapture";
