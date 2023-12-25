@@ -89,7 +89,7 @@ export default function Home() {
               <CaptureInput onSubmit={handleSubmit} />
             </div>
 
-            {mutation.isPending && (
+            {(mutation.isPending || mutationRecurring.isPending) && (
               <div className="ml-4 py-10">
                 <Spinner className="w-full" />
               </div>

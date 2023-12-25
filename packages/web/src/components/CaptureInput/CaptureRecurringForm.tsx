@@ -15,6 +15,7 @@ interface Props {
   onSubmit?: (data: any) => void;
   disabled?: boolean;
   value?: CaptureInputValues;
+  submitText?: string;
 }
 
 const RecurringCaptureForm: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const RecurringCaptureForm: React.FC<Props> = ({
   onSubmit,
   disabled,
   value,
+  submitText = "Capture",
 }) => {
   const form = useForm({
     resolver: yupResolver(validationRecurringSchema) as any,
@@ -204,7 +206,7 @@ const RecurringCaptureForm: React.FC<Props> = ({
           onClick={form.handleSubmit(onSubmit || console.log)}
           disabled={form.formState.isSubmitting || disabled}
         >
-          Capture
+          {submitText}
         </button>
       </div>
     </div>

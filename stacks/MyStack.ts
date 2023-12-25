@@ -131,7 +131,7 @@ export function API({ stack, app }: StackContext) {
           TARGET_ROLE_ARN: roleExecuteFunction.roleArn,
           GROUP_NAME: cfnScheduleGroup.name || "",
         },
-        permissions: ["scheduler:CreateSchedule", "iam:PassRole"],
+        permissions: ["scheduler:CreateSchedule", "scheduler:UpdateSchedule", "iam:PassRole"],
       },
       authorizer: "jwt",
     },
@@ -146,7 +146,7 @@ export function API({ stack, app }: StackContext) {
         "packages/functions/src/api/recurringCapture/list.handler",
       "GET /recurring-capture/{id}":
         "packages/functions/src/api/recurringCapture/get.handler",
-      "PUT /recurring-capture/{id}":
+      "PUT /recurring-capture":
         "packages/functions/src/api/recurringCapture/put.handler",
       // test
       "POST /test/{id}": "packages/functions/src/test.handler",

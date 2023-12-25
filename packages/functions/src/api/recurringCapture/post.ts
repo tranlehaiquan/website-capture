@@ -21,22 +21,10 @@ import {
 
 const schedulerClient = new SchedulerClient({});
 
-// Minutes: 0-59
-// Hours: 0-23
-// Days of week: 1-7
-// Day of month: 1-31
-
-// Daily -> Minutes, Hours
-// Weekly -> Minutes, Hours, Day of week
-// Monthly -> Minutes, Hours, Day of Month
 const bodySchema = yup.object().shape({
   body: validationRecurringSchema,
 });
 
-/**
- * New Capture with input bodySchema
- * This handle will be called when you make a POST request to /recurring-capture
- */
 const postHandler = async (event: any) => {
   const user = await getUserFromEvent(event);
   const { body } = await bodySchema.cast(event);

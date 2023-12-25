@@ -1,4 +1,4 @@
-import { get, post } from "aws-amplify/api";
+import { get, post, put } from "aws-amplify/api";
 
 type Capture = {
   createdAt: string;
@@ -90,3 +90,15 @@ export const getRecurringCaptureById = async (id: string): Promise<any> => {
 
   return (await body.json()) as any[];
 };
+
+export const updateRecurringCapture = async (data: any): Promise<any> => {
+  const { body } = await put({
+    apiName: "capture",
+    path: `/recurring-capture`,
+    options: {
+      body: data,
+    }
+  }).response;
+
+  return (await body.json()) as any[];
+}
