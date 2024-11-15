@@ -1,41 +1,12 @@
 {
   "name": "website-capture",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "sst dev",
-    "build": "sst build",
-    "deploy": "sst deploy",
-    "remove": "sst remove",
-    "console": "sst console",
-    "typecheck": "tsc --noEmit",
-    "build:packages": "pnpm run -r build"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "@puppeteer/browsers": "^1.8.0",
-    "@tsconfig/node18": "^18.2.2",
-    "@types/fs-extra": "^11.0.4",
-    "aws-cdk-lib": "2.110.1",
-    "constructs": "10.3.0",
-    "fs-extra": "^11.2.0",
-    "sst": "2.38.7",
-    "typescript": "^5.2.2"
-  },
-  "workspaces": [
-    "packages/*"
-  ],
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.438.0",
-    "@aws-sdk/client-scheduler": "^3.454.0",
-    "@aws-sdk/client-sqs": "^3.438.0",
-    "@aws-sdk/s3-request-presigner": "^3.438.0",
-    "@sparticuz/chromium": "119.0.0",
-    "adm-zip": "^0.5.10",
-    "http-errors": "^2.0.0",
-    "pg": "^8.11.3",
-    "puppeteer-core": "21.6.1",
-    "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.3.17"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
