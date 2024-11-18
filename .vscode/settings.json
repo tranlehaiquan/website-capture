@@ -3,6 +3,7 @@
     "**/.sst": true
   },
   "cSpell.words": [
+    "nestjs",
     "Revalidator"
   ]
 }
