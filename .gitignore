@@ -19,3 +19,6 @@ localChromium
 layers
 
 dist
+
+node_modules
+.serverless
