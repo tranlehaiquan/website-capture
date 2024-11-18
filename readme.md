@@ -1,19 +1,4 @@
-## Getting started
+Lambda functions containers initialization failed because of Error building docker image: The command '/bin/sh -c mv                     
+/var/rapid/aws-lambda-rie-x86_64 /var/rapid/aws-lambda-rie && chmod +x /var/rapid/aws-lambda-rie' returned a non-zero code: 133    
 
-<!-- markdown insert image -->
-
-![image](./solution-overview.jpeg)
-
-<!-- markdown flow chart capture -->
-
-![image](./capture-one-time.jpeg)
-
-<!-- markdown flow chart recurring -->
-
-![image](./capture-recurring.jpeg)
-
-## Develop
-
-```bash
-pnpm run dev
-```
+I always got this error when trying to run local
