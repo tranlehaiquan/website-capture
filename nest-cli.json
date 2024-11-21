@@ -10,15 +10,6 @@
   "monorepo": true,
   "root": "apps/web",
   "projects": {
-    "web": {
-      "type": "application",
-      "root": "apps/web",
-      "entryFile": "main",
-      "sourceRoot": "apps/web/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/web/tsconfig.app.json"
-      }
-    },
     "web-capture": {
       "type": "application",
       "root": "apps/web-capture",
@@ -28,22 +19,13 @@
         "tsConfigPath": "apps/web-capture/tsconfig.app.json"
       }
     },
-    "web-capture1": {
-      "type": "application",
-      "root": "apps/web-capture1",
-      "entryFile": "main",
-      "sourceRoot": "apps/web-capture1/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/web-capture1/tsconfig.app.json"
-      }
-    },
-    "my-library": {
+    "drizzle-db": {
       "type": "library",
-      "root": "libs/my-library",
+      "root": "libs/drizzle-db",
       "entryFile": "index",
-      "sourceRoot": "libs/my-library/src",
+      "sourceRoot": "libs/drizzle-db/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/my-library/tsconfig.lib.json"
+        "tsConfigPath": "libs/drizzle-db/tsconfig.lib.json"
       }
     }
   }
