@@ -5,14 +5,14 @@ import { WebCaptureService } from './web-capture.service';
 export class WebCaptureController {
   constructor(private readonly webCaptureService: WebCaptureService) {}
 
-  @Get()
-  getHello() {
-    return this.webCaptureService.getHello();
-  }
-
   @Post()
   insertUser() {
     console.log('Inserting a user into the database');
     return this.webCaptureService.insertUser();
+  }
+
+  @Get()
+  getHello() {
+    return this.webCaptureService.getHello();
   }
 }
