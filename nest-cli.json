@@ -1,14 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/web/src",
+  "sourceRoot": "apps/web-capture/src",
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/web/tsconfig.app.json"
+    "tsConfigPath": "apps/web-capture/tsconfig.app.json"
   },
   "monorepo": true,
-  "root": "apps/web",
+  "root": "apps/web-capture",
   "projects": {
     "web-capture": {
       "type": "application",
