@@ -1,0 +1,3 @@
+class CreateCapture {
+  url: string;
+}

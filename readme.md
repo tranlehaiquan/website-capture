@@ -1,5 +1,34 @@
 ## Getting started
 
+```mermaid
+erDiagram
+    CAPTURE {
+        string id
+        string ImagePath
+        string Status
+        string URL
+    }
+
+    RECURRING ||--o{ CAPTURE : contains
+    RECURRING {
+        string id
+        string Amount
+        string Frequency
+        date StartDate
+        date EndDate
+        string URL
+    }
+
+    USER ||--o{ CAPTURE : has
+    USER ||--o{ RECURRING : has
+    USER {
+        string id
+        string Name
+        string Email
+        string Password
+    }
+```
+
 <!-- markdown insert image -->
 
 ![image](./solution-overview.jpeg)
@@ -119,5 +148,5 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 ```
-POSTGRES_USER=admin POSTGRES_PASSWORD=admin POSTGRES_DB=postgres  docker compose up   
+POSTGRES_USER=admin POSTGRES_PASSWORD=admin POSTGRES_DB=postgres  docker compose up
 ```
