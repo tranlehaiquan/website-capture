@@ -1,15 +1,26 @@
-import { pgTable, unique, integer, varchar } from "drizzle-orm/pg-core"
+import { pgTable, unique, uuid, varchar, integer, timestamp } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 
 
 export const users = pgTable("users", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "users_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	id: uuid().defaultRandom().primaryKey().notNull(),
 	name: varchar({ length: 255 }).notNull(),
 	age: integer().notNull(),
 	email: varchar({ length: 255 }).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	deletedAt: timestamp("deleted_at", { mode: 'string' }),
 }, (table) => {
 	return {
 		usersEmailUnique: unique("users_email_unique").on(table.email),
 	}
+});
+
+export const captures = pgTable("captures", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	url: varchar({ length: 255 }).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	deletedAt: timestamp("deleted_at", { mode: 'string' }),
 });

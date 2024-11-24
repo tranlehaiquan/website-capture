@@ -1,3 +1,3 @@
-class CreateCapture {
+export class CreateCapture {
   url: string;
 }

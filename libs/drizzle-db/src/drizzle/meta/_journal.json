@@ -8,6 +8,27 @@
       "when": 1732167166315,
       "tag": "0000_tiny_tana_nile",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1732444783823,
+      "tag": "0001_daffy_zodiak",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732444883062,
+      "tag": "0002_kind_logan",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1732444951352,
+      "tag": "0003_jazzy_bromley",
+      "breakpoints": true
     }
   ]
 }
