@@ -1,7 +1,9 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import CapturesRepo from "../repositories/captures.repo";
 import { CreateCapture } from "./captures.dto";
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('captures')
 @Controller('captures')
 class CapturesController {
   constructor(

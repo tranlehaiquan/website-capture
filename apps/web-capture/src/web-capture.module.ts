@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { WebCaptureController } from './web-capture.controller';
-import { DrizzleModule } from '@app/drizzle-db';
 import { ConfigModule } from '@nestjs/config';
 import { CapturesModule } from './captures/captures.module';
 
