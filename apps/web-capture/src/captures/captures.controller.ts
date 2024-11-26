@@ -11,16 +11,13 @@ class CapturesController {
   constructor(
     private readonly capturesRepo: CapturesRepo,
     private readonly captureServices: CapturesServices,
-    private readonly sqsService: MessageQueueService,
   ) {}
 
-  // get all
   @Get()
   async findAllCaptures() {
     return this.capturesRepo.findAll();
   }
 
-  // get by id
   @Get(':id')
   async findCaptureById(@Param('id') id: string) {
     return this.capturesRepo.findOneById(id);

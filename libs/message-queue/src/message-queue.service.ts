@@ -20,11 +20,6 @@ export class MessageQueueService implements OnModuleInit {
 
   sendMessage(message: string | object) {
     const stringifyMsg = typeof message === 'string' ? message : JSON.stringify(message);
-    console.log({
-      QueueUrl: this.queueUrl,
-      MessageBody: stringifyMsg,
-      DelaySeconds: 0,
-    });
     const command = new SendMessageCommand({
       QueueUrl: this.queueUrl,
       MessageBody: stringifyMsg,
