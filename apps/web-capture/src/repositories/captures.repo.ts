@@ -3,6 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { dbSchema } from '@app/drizzle-db';
 import { eq } from 'drizzle-orm';
 
+export enum CaptureStatus {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+}
+
 @Injectable()
 class CapturesRepo {
   constructor(private drizzle: DrizzleService) {}

@@ -23,6 +23,12 @@
       ],
       "@app/drizzle-db/*": [
         "libs/drizzle-db/src/*"
+      ],
+      "@app/message-queue": [
+        "libs/message-queue/src"
+      ],
+      "@app/message-queue/*": [
+        "libs/message-queue/src/*"
       ]
     }
   }

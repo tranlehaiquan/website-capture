@@ -17,5 +17,6 @@ export const usersTable = pgTable('users', {
 export const capturesTable = pgTable('captures', {
   id: uuid().primaryKey().defaultRandom().notNull(),
   url: varchar({ length: 255 }).notNull(),
+  status: varchar({ length: 255 }).notNull(), // pending, completed, failed
   ...timestamps,
 });

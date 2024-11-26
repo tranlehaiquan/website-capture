@@ -6,7 +6,9 @@
     "deleteOutDir": true,
     "webpack": true,
     "tsConfigPath": "apps/web-capture/tsconfig.app.json",
-    "plugins": ["@nestjs/swagger"]
+    "plugins": [
+      "@nestjs/swagger"
+    ]
   },
   "monorepo": true,
   "root": "apps/web-capture",
@@ -27,6 +29,15 @@
       "sourceRoot": "libs/drizzle-db/src",
       "compilerOptions": {
         "tsConfigPath": "libs/drizzle-db/tsconfig.lib.json"
+      }
+    },
+    "message-queue": {
+      "type": "library",
+      "root": "libs/message-queue",
+      "entryFile": "index",
+      "sourceRoot": "libs/message-queue/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/message-queue/tsconfig.lib.json"
       }
     }
   }

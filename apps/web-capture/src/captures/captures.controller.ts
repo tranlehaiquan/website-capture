@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
-import CapturesRepo from "../repositories/captures.repo";
-import { CreateCapture } from "./captures.dto";
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import CapturesRepo from '../repositories/captures.repo';
+import { CreateCapture } from './captures.dto';
 import { ApiTags } from '@nestjs/swagger';
+import CapturesServices from './captures.services';
 
 @ApiTags('captures')
 @Controller('captures')
 class CapturesController {
   constructor(
-    private readonly capturesRepo: CapturesRepo
+    private readonly capturesRepo: CapturesRepo,
+    private readonly captureServices: CapturesServices,
   ) {}
 
   // get all
@@ -18,13 +20,13 @@ class CapturesController {
 
   // get by id
   @Get(':id')
-  async findCaptureById(@Param('id') id: string) { 
+  async findCaptureById(@Param('id') id: string) {
     return this.capturesRepo.findOneById(id);
   }
 
   @Post()
   async createCapture(@Body() newCapture: CreateCapture) {
-    return this.capturesRepo.create(newCapture);
+    return this.captureServices.createCapture(newCapture);
   }
 }
 
