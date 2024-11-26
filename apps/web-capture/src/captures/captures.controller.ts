@@ -3,6 +3,7 @@ import CapturesRepo from '../repositories/captures.repo';
 import { CreateCapture } from './captures.dto';
 import { ApiTags } from '@nestjs/swagger';
 import CapturesServices from './captures.services';
+import { MessageQueueService } from '@app/message-queue';
 
 @ApiTags('captures')
 @Controller('captures')
@@ -10,6 +11,7 @@ class CapturesController {
   constructor(
     private readonly capturesRepo: CapturesRepo,
     private readonly captureServices: CapturesServices,
+    private readonly sqsService: MessageQueueService,
   ) {}
 
   // get all
