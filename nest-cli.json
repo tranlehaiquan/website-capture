@@ -39,6 +39,16 @@
       "compilerOptions": {
         "tsConfigPath": "libs/message-queue/tsconfig.lib.json"
       }
+    },
+    "web-capture-runner": {
+      "type": "application",
+      "root": "apps/web-capture-runner",
+      "entryFile": "main",
+      "sourceRoot": "apps/web-capture-runner/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/web-capture-runner/tsconfig.app.json",
+        "webpackConfigPath": "lambda-webpack.config"
+      }
     }
   }
 }
