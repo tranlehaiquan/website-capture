@@ -12,8 +12,6 @@ export const handler: Handler = async (
   const appContext = await NestFactory.createApplicationContext(WebCaptureRunnerModule);
   const appService = appContext.get(WebCaptureRunnerService);
 
-  console.log(event);
-
   return {
     body: appService.getHello(),
     statusCode: HttpStatus.OK,
