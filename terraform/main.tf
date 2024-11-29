@@ -3,6 +3,11 @@ provider "aws" {
   region = "ap-southeast-1"
 }
 
+variable "DATABASE_URL" {
+  type        = string
+  description = "Database URL"
+}
+
 # VPC Configuration
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
@@ -229,6 +234,10 @@ resource "aws_ecs_task_definition" "app" {
         {
           name  = "PORT"
           value = "80"
+        },
+        {
+          name = "DATABASE_URL"
+          value = var.DATABASE_URL
         }
       ]
     }
@@ -239,7 +248,86 @@ resource "aws_ecs_task_definition" "app" {
   }
 }
 
-# ECS Service
+# Data source for availability zones
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+# Add ALB Security Group
+resource "aws_security_group" "alb" {
+  name        = "alb-sg"
+  description = "ALB Security Group"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow HTTP inbound"
+  }
+
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "alb-sg"
+  }
+}
+
+# Create ALB
+resource "aws_lb" "main" {
+  name               = "fargate-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb.id]
+  subnets           = aws_subnet.public[*].id
+
+  tags = {
+    Name = "fargate-alb"
+  }
+}
+
+# Create ALB Target Group
+resource "aws_lb_target_group" "app" {
+  name        = "fargate-tg"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "ip"
+
+  health_check {
+    healthy_threshold   = "3"
+    interval           = "30"
+    protocol           = "HTTP"
+    matcher            = "200"
+    timeout            = "3"
+    path              = "/"
+    unhealthy_threshold = "2"
+  }
+
+  tags = {
+    Name = "fargate-tg"
+  }
+}
+
+# Create ALB Listener
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.app.arn
+  }
+}
+
+# Modify the ECS Service to use the ALB
 resource "aws_ecs_service" "app" {
   name            = "app"
   cluster         = aws_ecs_cluster.main.id
@@ -253,14 +341,28 @@ resource "aws_ecs_service" "app" {
     assign_public_ip = true
   }
 
+  load_balancer {
+    target_group_arn = aws_lb_target_group.app.arn
+    container_name   = "app"
+    container_port   = 80
+  }
+
+  depends_on = [aws_lb_listener.http]
+
   tags = {
     Name = "app-service"
   }
 }
 
-# Data source for availability zones
-data "aws_availability_zones" "available" {
-  state = "available"
+# Modify ECS Tasks Security Group to allow traffic from ALB
+resource "aws_security_group_rule" "ecs_tasks_ingress_alb" {
+  security_group_id        = aws_security_group.ecs_tasks.id
+  type                    = "ingress"
+  protocol                = "tcp"
+  from_port               = 80
+  to_port                 = 80
+  source_security_group_id = aws_security_group.alb.id
+  description             = "Allow traffic from ALB"
 }
 
 # Outputs
@@ -274,6 +376,12 @@ output "ecs_cluster_name" {
 
 output "vpc_id" {
   value = aws_vpc.main.id
+}
+
+# Output the ALB DNS name
+output "alb_url" {
+  value = "http://${aws_lb.main.dns_name}"
+  description = "Application URL"
 }
 
 
