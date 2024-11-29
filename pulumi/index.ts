@@ -130,6 +130,7 @@ const websiteCaptureRunnerFnc = new aws.lambda.Function(
     }),
   }
 );
+
 // set sqs trigger for lambda
 new aws.lambda.EventSourceMapping("website-capture-runner-sqs", {
   eventSourceArn: sqs.arn,
