@@ -197,6 +197,37 @@ resource "aws_iam_role" "ecs_task_role" {
   }
 }
 
+# sqs queue
+resource "aws_sqs_queue" "sqs_capture" {
+  name = "web-capture-queue"
+  delay_seconds = 0
+}
+
+# give task role permission to access sqs
+resource "aws_iam_policy" "sqs_policy" {
+  name = "sqs-policy"
+  description = "Allow ECS Task to access SQS"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "sqs:SendMessage",
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage"
+        ],
+        Resource = aws_sqs_queue.sqs_capture.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "sqs_policy_attachment" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.sqs_policy.arn
+}
+
 # Task Definition
 resource "aws_ecs_task_definition" "app" {
   family                   = "app"
@@ -232,12 +263,20 @@ resource "aws_ecs_task_definition" "app" {
           value = "production"
         },
         {
+          name  = "NODE_ENV"
+          value = "production"
+        },
+        {
           name  = "PORT"
           value = "80"
         },
         {
           name = "DATABASE_URL"
           value = var.DATABASE_URL
+        },
+        {
+          name = "AWS_QUEUE_URL"
+          value = aws_sqs_queue.sqs_capture.id
         }
       ]
     }
@@ -409,9 +448,9 @@ data "archive_file" "web-capture-worker-lambda" {
   output_path = "./dist/worker_lambda_function_payload.zip"
 }
 
-resource "aws_sqs_queue" "sqs_capture" {
-  name = "web-capture-queue"
-  delay_seconds = 0
+resource "aws_iam_role_policy_attachment" "runner-access-sqs" {
+  role      = aws_iam_role.lambda-worker.name
+  policy_arn = aws_iam_policy.sqs_policy.arn
 }
 
 # create lambda
