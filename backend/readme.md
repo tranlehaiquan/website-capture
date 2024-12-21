@@ -150,3 +150,9 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 ```
 POSTGRES_USER=admin POSTGRES_PASSWORD=admin POSTGRES_DB=postgres  docker compose up
 ```
+
+## Guide install puppeteer
+
+```bash
+npx @puppeteer/browsers install chromium@latest --path /tmp/localChromium
+```
